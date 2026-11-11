@@ -1,0 +1,56 @@
+## Interface: 16001
+## Title: Spellwise
+## Notes: Adds damage and healing per second and per mana to spell tooltips.
+## Notes-ruRU: Добавляет в подсказки заклинаний урон и исцеление в секунду и на единицу маны.
+## Notes-deDE: Zeigt in Zauber-Tooltips Schaden und Heilung pro Sekunde und pro Mana.
+## Notes-esES: Añade a los tooltips de hechizos el daño y la sanación por segundo y por maná.
+## Notes-esMX: Agrega a los tooltips de hechizos el daño y la sanación por segundo y por maná.
+## Notes-frFR: Ajoute aux infobulles des sorts les dégâts et soins par seconde et par point de mana.
+## Notes-koKR: 주문 툴팁에 초당 및 마나당 피해량과 치유량을 표시합니다.
+## Notes-ptBR: Adiciona às dicas de feitiços o dano e a cura por segundo e por mana.
+## Notes-zhCN: 在法术提示中显示每秒和每点法力值的伤害与治疗量。
+## Notes-zhTW: 在法術提示中顯示每秒和每點法力的傷害與治療量。
+## Version: @project-version@
+## Author: Nikyou
+## Category: Combat
+## SavedVariables: SpellwiseDB
+## IconTexture: 236513
+
+embeds.xml
+
+Locales.xml
+
+Resources.lua
+Data\DumpSpells.lua
+Data\CritData.lua
+Patterns\enUS.lua
+Patterns\ruRU.lua
+Patterns\deDE.lua
+Patterns\esES.lua
+Patterns\esMX.lua
+Patterns\frFR.lua
+Patterns\koKR.lua
+Patterns\ptBR.lua
+Patterns\zhCN.lua
+Patterns\zhTW.lua
+
+Parser.lua
+Metrics.lua
+Format.lua
+NormalCost.lua
+PowerMax.lua
+
+Core.lua
+Spells.lua
+Rules.lua
+Tooltip.lua
+Dump.lua
+ImportExport.lua
+
+Options\Widgets.lua
+Options\Options.lua
+Options\LinesTab.lua
+Options\AppearanceTab.lua
+Options\PetsTab.lua
+Options\RulesTab.lua
+Options\ProfilesTab.lua
