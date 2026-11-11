@@ -56,8 +56,8 @@ local function noticeMissingPack()
     ns.Print(format(L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."], locale))
 end
 
--- the game rebuilds the tooltip itself once the text is there. never rebuild a tooltip from here: the load can
--- answer at once (Attack has no text at all) and a rebuild from addon code taints tooltips with secret lines
+-- the game redraws the tooltip once the text loads. never rebuild it from here: Attack has no text, so that
+-- loops, and a rebuild from addon code taints secret lines
 local requested = {}
 local RETRY_AFTER = 10
 
@@ -123,20 +123,25 @@ local function detailsState()
 end
 
 -- expected damage and healing with crits. crit = {dmg = {kind, chance, multiplier, factor}, heal = {...}}
-local function withCrit(spellID, result)
+local function withCrit(spellID, result, unit)
     local first = result.combo and result.combo[1] or result
     local school = first.dmg.school
     local crit = {}
     for _, side in ipairs({"dmg", "heal"}) do
         local kind = Spells.CritKind(spellID, school, side == "heal")
-        local chance, multiplier = Spells.Crit(spellID, kind, side == "dmg" and school or nil)
+        local chance, multiplier
+        if unit == "pet" then
+            chance, multiplier = Spells.PetCrit(kind, side == "dmg" and school or nil)
+        else
+            chance, multiplier = Spells.Crit(spellID, kind, side == "dmg" and school or nil)
+        end
         crit[side] = {kind = kind, chance = chance, multiplier = multiplier,
                       factor = chance and Metrics.CritFactor(chance, multiplier) or 1}
     end
     return Metrics.WithCrit(result, crit.dmg.factor, crit.heal.factor), crit
 end
 
--- out gets text, kind pairs. costs and max come from the unit, the player or the pet
+-- fills out with text, kind pairs. costs and max are the unit's, player or pet
 function Tooltip.Build(spellID, unit, out)
     wipe(out)
     local rule = ns.Rules.Get(spellID)
@@ -161,8 +166,10 @@ function Tooltip.Build(spellID, unit, out)
     local crit
     if result and not result.weapon then
         Spells.Timings(spellID, timings)
-        -- the pet's crit isn't readable, its spells stay without
-        if db().profile.lines.crit and unit == "player" then result, crit = withCrit(spellID, result) end
+        -- a pet's crit is its owner's, only hunters and warlocks have one
+        if db().profile.lines.crit and (unit == "player" or Spells.PetCrit("spell") ~= false) then
+            result, crit = withCrit(spellID, result, unit)
+        end
     else
         result = nil
     end
@@ -198,7 +205,7 @@ end
 
 local function percent(value, fmt) return Format.Number(value * 100, 1, fmt) end
 
--- the chance and size used, and for melee and ranged what higher targets do to them
+-- crit chance and size, and for melee and ranged how higher targets lower it
 local function critLines(out, m, crit, fmt)
     local function add(text)
         out[#out + 1] = text
@@ -373,23 +380,51 @@ end
 
 local built = {}
 
+local function appendLine(tooltip, s, text, color, path, size, flags)
+    tooltip:AddLine(text, color[1], color[2], color[3])
+    local line = s.prefix and _G[s.prefix .. tooltip:NumLines()]
+    if line then
+        s.count = s.count + 1
+        s.lines[s.count], s.fonts[s.count] = line, line:GetFontObject()
+        line:SetFont(path, size, flags)
+    end
+end
+
 local function addLines(tooltip, spellID, unit)
     local s = stateOf(tooltip)
     s.spellID, s.unit, lastSpellID = spellID, unit, spellID
     Tooltip.Build(spellID, unit, built)
     if #built == 0 then return end
     local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
-    for i = 1, #built, 2 do
-        local color = Tooltip.Color(built[i + 1], built.school)
-        tooltip:AddLine(built[i], color[1], color[2], color[3])
-        local line = s.prefix and _G[s.prefix .. tooltip:NumLines()]
-        if line then
-            s.count = s.count + 1
-            s.lines[s.count], s.fonts[s.count] = line, line:GetFontObject()
-            line:SetFont(path, size, flags)
+    for i = 1, #built, 2 do appendLine(tooltip, s, built[i], Tooltip.Color(built[i + 1], built.school), path, size, flags) end
+    tooltip:Show()
+end
+
+-- only action buttons redraw their tooltip on a key press, so elsewhere the hint turns into the details in place.
+-- lines can't be removed, letting go waits for the next redraw. skipped in combat, the text can be secret there
+local function onModifier()
+    local mode = db() and db().profile.lines.details
+    if not MODIFIERS[mode] or not modifierDown(mode) or InCombatLockdown() then return end
+    for tooltip, s in pairs(states) do
+        if s.count > 0 and s.spellID and tooltip:IsShown() then
+            Tooltip.Build(s.spellID, s.unit, built)
+            local pairsCount = #built / 2
+            if pairsCount > s.count then
+                local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
+                local had = s.count
+                for n = 1, pairsCount do
+                    local color = Tooltip.Color(built[n * 2], built.school)
+                    if n <= had then
+                        s.lines[n]:SetText(built[n * 2 - 1])
+                        s.lines[n]:SetTextColor(color[1], color[2], color[3])
+                    else
+                        appendLine(tooltip, s, built[n * 2 - 1], color, path, size, flags)
+                    end
+                end
+                tooltip:Show()
+            end
         end
     end
-    tooltip:Show()
 end
 
 local BANK_PET = Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Pet or 1
@@ -445,6 +480,9 @@ end
 
 function Tooltip.Enable()
     stateOf(GameTooltip)
+    local events = CreateFrame("Frame")
+    events:RegisterEvent("MODIFIER_STATE_CHANGED")
+    events:SetScript("OnEvent", function() ns.Guard(onModifier) end)
     local function post(tooltip, data) ns.Guard(onTooltipData, tooltip, data) end
     if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, post)

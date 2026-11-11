@@ -43,7 +43,7 @@ The numbers come from the tooltip, so your gear bonuses are included.
 
 * Weapon abilities (Heroic Strike, Sinister Strike) are skipped. Their damage isn't in the tooltip.
 * A finisher's DPS doesn't count the time spent building combo points.
-* Hit chance and resistances aren't counted. Crit isn't counted for pets and totems.
+* Hit chance and resistances aren't counted. Crit isn't counted for totems. Pets use your crit.
 
 ## Localisation
 

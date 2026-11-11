@@ -191,6 +191,23 @@ function Spells.CritKind(spellID, school, isHeal)
     return "spell"
 end
 
+-- pets copy their owner's crit: a hunter's pet takes the higher of melee and ranged, a warlock's pet the spell crit.
+-- false when the pet's owner is some other class
+function Spells.PetCrit(kind, school)
+    local _, class = UnitClass("player")
+    class = text(class)
+    local chance
+    if class == "HUNTER" then
+        local melee, ranged = sheetCrit("melee"), sheetCrit("ranged")
+        chance = melee and ranged and math.max(melee, ranged) or melee or ranged
+    elseif class == "WARLOCK" then
+        chance = sheetCrit("spell", school and school ~= "PHYSICAL" and school or "SHADOW")
+    else
+        return false
+    end
+    return chance, ns.Metrics.CritMultiplier(kind, 0)
+end
+
 -- chance (0 to 1, nil while never readable), multiplier and the talent parts, for one spell
 function Spells.Crit(spellID, kind, school)
     local chance = sheetCrit(kind, school)
