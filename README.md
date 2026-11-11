@@ -55,7 +55,7 @@ If a number looks wrong in your language:
 2. Wait until the spells finish loading.
 3. Press Ctrl+A, then Ctrl+C. Paste the text into a GitHub issue or send it to me on Discord.
 
-You can improve the translations on [CurseForge](https://legacy.curseforge.com/wow/addons/spellwise/localization).
+To improve a translation, open a pull request on [GitHub](https://github.com/Nikyou/Spellwise/pulls).
 
 ## Issues & Feedback
 
