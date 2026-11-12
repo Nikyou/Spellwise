@@ -19,7 +19,7 @@ The numbers come from the tooltip, so your gear bonuses are included.
 * `/sp reset` - move the settings window to the middle of the screen
 * `/sp help` - list all commands
 * Minimap button and addon compartment - open the settings
-* Hold **Shift** on a spell to see how the numbers are worked out. You can pick another key in the Lines tab.
+* Hold **Shift** on a spell to see how the numbers are worked out. The Details tab sets the key and which lines show.
 
 ## Key Features
 

@@ -37,14 +37,6 @@ local LABELS = {
 
 local function profile() return ns.addon.db.profile end
 
-local function detailItems()
-    local items = {{value = "NONE", text = L["Never"]}, {value = "ALWAYS", text = L["Always"]}}
-    for _, mode in ipairs({"SHIFT", "CTRL", "ALT"}) do
-        items[#items + 1] = {value = mode, text = format(L["While %s is held"], ns.Tooltip.ModifierName(mode))}
-    end
-    return items
-end
-
 local function setter(section, key)
     return function(checked)
         profile()[section][key] = checked
@@ -89,11 +81,6 @@ local function create(parent)
         tooltip:AddLine(L["Average with your crit chance and talents, against a target of your level. The details show higher levels."], 1, 1, 1, true)
     end)
     left.help(L["Divide by the cooldown when it's longer than the cast."])
-    left.label(L["Show details"])
-    controls.details = W.Dropdown(parent, 260, detailItems, function(value)
-        profile().lines.details = value
-    end)
-    left.place(controls.details, 32)
 
     left.title(L["Per resource"])
     for _, powerType in ipairs(ns.Resources.ORDER) do
@@ -127,7 +114,6 @@ local function refresh()
     controls.dot:SetChecked(p.lines.dot)
     controls.dotLong:SetChecked(p.lines.dotLong)
     controls.perCast:SetChecked(p.lines.perCast)
-    controls.details:SetValue(p.lines.details)
     controls.useCooldown:SetChecked(p.lines.useCooldown)
     controls.crit:SetChecked(p.lines.crit)
     for _, entry in ipairs(resourceBoxes) do entry.box:SetChecked(p.resources[entry.powerType][entry.key]) end

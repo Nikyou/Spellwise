@@ -162,15 +162,30 @@ L["Minimap"] = true
 L["Show minimap button"] = true
 L["About the values"] = true
 L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] = true
-L["Never"] = true
-L["Always"] = true
-L["While %s is held"] = true
 L["Divide by the cooldown when it's longer than the cast."] = true
-L["Show details"] = true
 L["Cost"] = true
 L["Per resource"] = true
 L["Include crit"] = true
 L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = true
+
+-- Options/DetailsTab.lua
+L["Never"] = true
+L["Always"] = true
+L["While %s is held"] = true
+L["Show details"] = true
+L["Details"] = true
+L["In the details"] = true
+L["Damage and healing amounts"] = true
+L["Time the values are divided by"] = true
+L["Spell school"] = true
+L["Costs"] = true
+L["Each number of combo points"] = true
+L["More rage or energy (%s, %s)"] = true
+L["Notes: per target, spell rules, bonuses"] = true
+L["Crit"] = true
+L["Crit chance and size"] = true
+L["Higher level targets"] = true
+L["Shown when Include crit is on in the Lines tab."] = true
 
 -- Options/AppearanceTab.lua
 L["None"] = true

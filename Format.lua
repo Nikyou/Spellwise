@@ -120,43 +120,55 @@ local function divisor(out, L, m, fmt)
     end
 end
 
-local function breakdownSide(out, m, L, fmt, kind)
+-- returns whether the side has anything at all, shown or not
+local function breakdownSide(out, m, L, fmt, kind, show)
     local heal = kind == "heal"
+    local amounts = show.amounts
     if m.charges and m.direct > 0 then
-        out[#out + 1] = format(L["%s charges of %s each, %s in total"], Format.Amount(m.charges, fmt),
-                               Format.Amount(m.perCharge, fmt), Format.Amount(m.direct, fmt))
+        if amounts then
+            out[#out + 1] = format(L["%s charges of %s each, %s in total"], Format.Amount(m.charges, fmt),
+                                   Format.Amount(m.perCharge, fmt), Format.Amount(m.direct, fmt))
+        end
     elseif m.direct > 0 then
-        if m.channel then
+        if amounts and m.channel then
             out[#out + 1] = format(heal and L["Healing: %s over a %s sec channel"] or L["Damage: %s over a %s sec channel"],
                                    Format.Amount(m.direct, fmt), Format.Amount(m.time, fmt))
-        else
+        elseif amounts then
             out[#out + 1] = format(heal and L["Healing: %s"] or L["Damage: %s"], Format.Amount(m.direct, fmt))
         end
-        divisor(out, L, m, fmt)
+        if show.time then divisor(out, L, m, fmt) end
     end
-    if m.periodic > 0 then
+    if amounts and m.periodic > 0 then
         out[#out + 1] = format(heal and L["Healing over time: %s over %s sec"] or L["Damage over time: %s over %s sec"],
                                Format.Amount(m.periodic, fmt), Format.Amount(m.periodicTime or 0, fmt))
     end
-    if m.perHit > 0 then
+    if amounts and m.perHit > 0 then
         out[#out + 1] = format(L["Per hit: %s (no attack rate in the text)"], Format.Amount(m.perHit, fmt))
     end
-    if m.absorb > 0 then out[#out + 1] = format(L["Absorb: %s"], Format.Amount(m.absorb, fmt)) end
+    if amounts and m.absorb > 0 then out[#out + 1] = format(L["Absorb: %s"], Format.Amount(m.absorb, fmt)) end
+    return m.direct > 0 or m.periodic > 0 or m.perHit > 0 or m.absorb > 0
 end
 
--- the details lines
-function Format.Breakdown(m, L, fmt, schoolName, costTexts, out)
+local EVERYTHING = {amounts = true, time = true, school = true, costs = true, notes = true}
+
+-- the details lines. show says which parts, everything when it's nil
+function Format.Breakdown(m, L, fmt, schoolName, costTexts, out, show)
     out = out or {}
-    breakdownSide(out, m.dmg, L, fmt, "dmg")
-    if m.dmg.school and (m.dmg.direct > 0 or m.dmg.periodic > 0 or m.dmg.perHit > 0) then
+    show = show or EVERYTHING
+    local hasDamage = breakdownSide(out, m.dmg, L, fmt, "dmg", show)
+    if show.school and m.dmg.school and (m.dmg.direct > 0 or m.dmg.periodic > 0 or m.dmg.perHit > 0) then
         out[#out + 1] = format(L["School: %s"], schoolName(m.dmg.school))
     end
-    breakdownSide(out, m.heal, L, fmt, "heal")
-    if #out == 0 then return out end
-    for _, text in ipairs(costTexts or {}) do out[#out + 1] = format(L["Cost: %s"], text) end
-    if m.area then out[#out + 1] = L["Values are per target"] end
-    if m.pinned then out[#out + 1] = L["Average damage set by a spell rule"] end
-    out[#out + 1] = L["Includes your bonuses, as the game shows them"]
+    local hasHealing = breakdownSide(out, m.heal, L, fmt, "heal", show)
+    if not (hasDamage or hasHealing) then return out end
+    if show.costs then
+        for _, text in ipairs(costTexts or {}) do out[#out + 1] = format(L["Cost: %s"], text) end
+    end
+    if show.notes then
+        if m.area then out[#out + 1] = L["Values are per target"] end
+        if m.pinned then out[#out + 1] = L["Average damage set by a spell rule"] end
+        out[#out + 1] = L["Includes your bonuses, as the game shows them"]
+    end
     return out
 end
 

@@ -21,6 +21,11 @@ local defaults = {
             useCooldown = false,
             crit = false, -- expected damage with crits, against a target of your level
         },
+        -- what the details show
+        detailLines = {
+            amounts = true, time = true, school = true, costs = true, notes = true,
+            crit = true, levels = true, combo = true, extra = true,
+        },
         -- per power type. a type that's off in Resources.lua shows nothing, whatever is saved here
         resources = {
             ["*"] = {dmg = false, heal = false, costLine = false},

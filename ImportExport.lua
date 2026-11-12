@@ -77,7 +77,7 @@ local function sanitizeRules(source)
     return out, count
 end
 
-local SECTIONS = {"lines", "show", "pets", "combo", "look"}
+local SECTIONS = {"lines", "detailLines", "show", "pets", "combo", "look"}
 
 local function profileData(profile)
     local data = {}

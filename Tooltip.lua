@@ -167,7 +167,7 @@ function Tooltip.Build(spellID, unit, out)
     if result and not result.weapon then
         Spells.Timings(spellID, timings)
         -- a pet's crit is its owner's, only hunters and warlocks have one
-        if db().profile.lines.crit and (unit == "player" or Spells.PetCrit("spell") ~= false) then
+        if db().profile.lines.crit and Spells.CanCrit(spellID) and (unit == "player" or Spells.PetCrit("spell") ~= false) then
             result, crit = withCrit(spellID, result, unit)
         end
     else
@@ -206,7 +206,7 @@ end
 local function percent(value, fmt) return Format.Number(value * 100, 1, fmt) end
 
 -- crit chance and size, and for melee and ranged how higher targets lower it
-local function critLines(out, m, crit, fmt)
+local function critLines(out, m, crit, fmt, show)
     local function add(text)
         out[#out + 1] = text
         out[#out + 1] = "info"
@@ -217,19 +217,21 @@ local function critLines(out, m, crit, fmt)
         local rate = part.perSec or part.periodicPerSec
         if (part.direct > 0 or part.periodic > 0 or (part.perHit or 0) > 0) then
             if not c.chance then
-                add(L["Crit can't be read right now, it's left out"])
+                if show.crit then add(L["Crit can't be read right now, it's left out"]) end
             else
-                local text = side == "heal" and L["Heal crit %s%% ×%s: +%s%% on average"]
-                               or L["Crit %s%% ×%s: +%s%% on average"]
-                add(format(text, percent(c.chance, fmt), Format.Number(c.multiplier, 2, fmt), percent(c.factor - 1, fmt)))
-                if side == "dmg" and c.kind ~= "spell" and rate then
+                if show.crit then
+                    local text = side == "heal" and L["Heal crit %s%% ×%s: +%s%% on average"]
+                                   or L["Crit %s%% ×%s: +%s%% on average"]
+                    add(format(text, percent(c.chance, fmt), Format.Number(c.multiplier, 2, fmt), percent(c.factor - 1, fmt)))
+                end
+                if side == "dmg" and show.levels and c.kind ~= "spell" and rate then
                     for levels = 1, 3 do
                         local chance = Metrics.CritAgainst(c.kind, c.chance, levels)
                         local value = rate / c.factor * Metrics.CritFactor(chance, c.multiplier)
                         local line = levels == 3 and L["Target level +%d (boss): crit %s%%, %s"] or L["Target level +%d: crit %s%%, %s"]
                         add(format(line, levels, percent(chance, fmt), format("%s: %s", L["DPS"], Format.Number(value, decimals, fmt))))
                     end
-                elseif side == "dmg" then
+                elseif side == "dmg" and show.levels then
                     add(L["Spell crit doesn't depend on target level"])
                 end
             end
@@ -281,12 +283,13 @@ function Tooltip.Lines(result, t, costs, free, basePercents, unit, details, out,
 
     if m and details and #out > 0 then
         if details == "show" then
-            Format.Breakdown(m, L, fmt, ns.SchoolName, costTexts, wipe(breakdownBuf))
+            local show = profile.detailLines
+            Format.Breakdown(m, L, fmt, ns.SchoolName, costTexts, wipe(breakdownBuf), show)
             for _, text in ipairs(breakdownBuf) do
                 out[#out + 1] = text
                 out[#out + 1] = "info"
             end
-            if combo then
+            if combo and show.combo then
                 local options = lineOptions(unit == "pet", free)
                 for points, row in ipairs(combo) do
                     local rowLines = Format.Lines(Metrics.Compute(row, t, costs), options, L, fmt, wipe(rowBuf))
@@ -298,8 +301,8 @@ function Tooltip.Lines(result, t, costs, free, basePercents, unit, details, out,
                     end
                 end
             end
-            breakPoints(out, m, extra, costs, free, unit, fmt, lineOptions(unit == "pet", free))
-            if crit then critLines(out, m, crit, fmt) end
+            if show.extra then breakPoints(out, m, extra, costs, free, unit, fmt, lineOptions(unit == "pet", free)) end
+            if crit then critLines(out, m, crit, fmt, show) end
         else
             out[#out + 1] = format(L["Hold %s for details"], Tooltip.ModifierName(profile.lines.details))
             out[#out + 1] = "info"

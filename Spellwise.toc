@@ -52,6 +52,7 @@ ImportExport.lua
 Options\Widgets.lua
 Options\Options.lua
 Options\LinesTab.lua
+Options\DetailsTab.lua
 Options\AppearanceTab.lua
 Options\PetsTab.lua
 Options\RulesTab.lua
