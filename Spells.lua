@@ -191,6 +191,15 @@ function Spells.CritKind(spellID, school, isHeal)
     return "spell"
 end
 
+-- totems never crit
+function Spells.CanCrit(spellID)
+    if not Spells.totems then
+        Spells.totems = {}
+        for _, id in ipairs(ns.CritData.totems) do Spells.totems[id] = true end
+    end
+    return not Spells.totems[spellID]
+end
+
 -- pets copy their owner's crit: a hunter's pet takes the higher of melee and ranged, a warlock's pet the spell crit.
 -- false when the pet's owner is some other class
 function Spells.PetCrit(kind, school)
