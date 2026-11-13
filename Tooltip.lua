@@ -281,29 +281,30 @@ function Tooltip.Lines(result, t, costs, free, basePercents, unit, details, out,
         end
     end
 
+    -- the details get built for the hint too, it only shows when they have something
     if m and details and #out > 0 then
-        if details == "show" then
-            local show = profile.detailLines
-            Format.Breakdown(m, L, fmt, ns.SchoolName, costTexts, wipe(breakdownBuf), show)
-            for _, text in ipairs(breakdownBuf) do
-                out[#out + 1] = text
-                out[#out + 1] = "info"
-            end
-            if combo and show.combo then
-                local options = lineOptions(unit == "pet", free)
-                for points, row in ipairs(combo) do
-                    local rowLines = Format.Lines(Metrics.Compute(row, t, costs), options, L, fmt, wipe(rowBuf))
-                    local texts = {}
-                    for i = 1, #rowLines, 2 do texts[#texts + 1] = rowLines[i] end
-                    if #texts > 0 then
-                        out[#out + 1] = format(L["Combo points %d: %s"], points, table.concat(texts, "; "))
-                        out[#out + 1] = "info"
-                    end
+        local before, show = #out, profile.detailLines
+        Format.Breakdown(m, L, fmt, ns.SchoolName, costTexts, wipe(breakdownBuf), show)
+        for _, text in ipairs(breakdownBuf) do
+            out[#out + 1] = text
+            out[#out + 1] = "info"
+        end
+        if combo and show.combo then
+            local options = lineOptions(unit == "pet", free)
+            for points, row in ipairs(combo) do
+                local rowLines = Format.Lines(Metrics.Compute(row, t, costs), options, L, fmt, wipe(rowBuf))
+                local texts = {}
+                for i = 1, #rowLines, 2 do texts[#texts + 1] = rowLines[i] end
+                if #texts > 0 then
+                    out[#out + 1] = format(L["Combo points %d: %s"], points, table.concat(texts, "; "))
+                    out[#out + 1] = "info"
                 end
             end
-            if show.extra then breakPoints(out, m, extra, costs, free, unit, fmt, lineOptions(unit == "pet", free)) end
-            if crit then critLines(out, m, crit, fmt, show) end
-        else
+        end
+        if show.extra then breakPoints(out, m, extra, costs, free, unit, fmt, lineOptions(unit == "pet", free)) end
+        if crit then critLines(out, m, crit, fmt, show) end
+        if details == "hint" and #out > before then
+            for i = #out, before + 1, -1 do out[i] = nil end
             out[#out + 1] = format(L["Hold %s for details"], Tooltip.ModifierName(profile.lines.details))
             out[#out + 1] = "info"
         end
