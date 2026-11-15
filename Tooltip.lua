@@ -167,7 +167,7 @@ function Tooltip.Build(spellID, unit, out)
     if result and not result.weapon then
         Spells.Timings(spellID, timings)
         -- a pet's crit is its owner's, only hunters and warlocks have one
-        if db().profile.lines.crit and Spells.CanCrit(spellID) and (unit == "player" or Spells.PetCrit("spell") ~= false) then
+        if db().profile.lines.crit and (unit == "player" or Spells.PetCrit("spell") ~= false) then
             result, crit = withCrit(spellID, result, unit)
         end
     else
