@@ -1,3 +1,9 @@
+#### 1.3
+* Totems crit again with "Include crit" on. Elemental Fury now counts for Searing and Magma Totem.
+* Searing Totem shows DPS and DPM, at one attack every 2.425 sec (from WoWSims). Per hit moved to the details.
+* Magma and Healing Stream Totem show DPS and HPS instead of DoT and HoT.
+* Amounts like 1815 no longer show as 1815.0.
+
 #### 1.2.1
 * "Hold Shift for details" no longer shows on spells with nothing more to show, like Purge or most totems.
 
