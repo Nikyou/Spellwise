@@ -26,8 +26,10 @@ end
 
 -- averages like 19.5 keep their decimal
 function Format.Amount(n, fmt)
-    if floor(n) == n then return Format.Number(n, 0, fmt) end
-    return Format.Number(n, 1, fmt)
+    -- 1650 x 1.1 isn't quite 1815 in floating point
+    local rounded = floor(n * 10 + 0.5) / 10
+    if floor(rounded) == rounded then return Format.Number(rounded, 0, fmt) end
+    return Format.Number(rounded, 1, fmt)
 end
 
 local function join(a, b)
@@ -66,8 +68,10 @@ local function sideLines(out, m, kind, o, L, fmt)
         if showRate and value then return format("%s: %s", rateLabel, Format.Number(value, o.decimals, fmt)) end
     end
 
-    local showPeriodic = o.dot and m.periodic > 0 and m.periodicPerSec
-    if m.charges and m.direct > 0 then
+    local showPeriodic = o.dot and m.periodic > 0 and m.periodicPerSec and not m.totem
+    if m.totem then
+        add(join(rate(m.periodicPerSec), costParts(m, "periodic", o, L, fmt, kind)))
+    elseif m.charges and m.direct > 0 then
         -- charges go off when the caster gets hit, there's no time to divide by
         add(join(format(L["Per cast: %s"], Format.Amount(m.direct, fmt)), costParts(m, "direct", o, L, fmt, kind)))
     elseif m.direct > 0 then
@@ -88,7 +92,12 @@ local function sideLines(out, m, kind, o, L, fmt)
             add(join(format(L["Total per cast: %s"], Format.Amount(m.total, fmt)), costParts(m, "total", o, L, fmt, kind)))
         end
     end
-    if m.perHit > 0 then add(format(L["Per hit: %s"], Format.Amount(m.perHit, fmt))) end
+    if m.perHit > 0 and m.attackEvery then
+        -- per hit goes to the details
+        add(join(rate(m.perSec), costParts(m, "attackTotal", o, L, fmt, kind)))
+    elseif m.perHit > 0 then
+        add(format(L["Per hit: %s"], Format.Amount(m.perHit, fmt)))
+    end
     if kind == "heal" and m.absorb > 0 then
         add(join(format(L["Absorb: %s"], Format.Amount(m.absorb, fmt)), costParts(m, "absorb", o, L, fmt, kind)))
     end
@@ -138,11 +147,17 @@ local function breakdownSide(out, m, L, fmt, kind, show)
         end
         if show.time then divisor(out, L, m, fmt) end
     end
-    if amounts and m.periodic > 0 then
+    if amounts and m.totem then
+        out[#out + 1] = format(heal and L["Healing: %s over %s sec"] or L["Damage: %s over %s sec"],
+                               Format.Amount(m.periodic, fmt), Format.Amount(m.periodicTime, fmt))
+    elseif amounts and m.periodic > 0 then
         out[#out + 1] = format(heal and L["Healing over time: %s over %s sec"] or L["Damage over time: %s over %s sec"],
                                Format.Amount(m.periodic, fmt), Format.Amount(m.periodicTime or 0, fmt))
     end
-    if amounts and m.perHit > 0 then
+    if amounts and m.perHit > 0 and m.attackEvery then
+        out[#out + 1] = format(L["Per hit: %s, one attack every %s sec"], Format.Amount(m.perHit, fmt),
+                               Format.Number(m.attackEvery, 3, fmt))
+    elseif amounts and m.perHit > 0 then
         out[#out + 1] = format(L["Per hit: %s (no attack rate in the text)"], Format.Amount(m.perHit, fmt))
     end
     if amounts and m.absorb > 0 then out[#out + 1] = format(L["Absorb: %s"], Format.Amount(m.absorb, fmt)) end

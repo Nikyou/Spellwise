@@ -209,8 +209,12 @@ end
 local function apply(r, rule, side, caps, text, pack, clause, tail)
     local shape = rule[2]
     local amount, duration
-    if shape == "direct" or shape == "hit" then
+    if shape == "direct" then
         amount = caps.value[1]
+    elseif shape == "hit" then
+        -- and how long the totem stands
+        amount = caps.value[1]
+        duration, text = lookupDuration(text, pack)
     elseif shape == "charges" then
         local count, each = caps.number[1], caps.value[1]
         if count and each then
@@ -240,6 +244,7 @@ local function apply(r, rule, side, caps, text, pack, clause, tail)
         local t = r[sideName]
         t[slot] = amount
         if slot == "periodic" then t.duration = duration end
+        if slot == "perHit" then t.lasts = duration end
     end
     if sideName == "dmg" or side == "drain" then
         r.dmg.school = r.dmg.school or findSchool(clause, pack) or findSchool(tail, pack)

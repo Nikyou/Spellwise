@@ -30,6 +30,7 @@ local function costValues(side, costs)
             periodic = perCost(side.periodic, cost),
             total = perCost(side.total, cost),
             absorb = perCost(side.absorb, cost),
+            attackTotal = perCost(side.attackTotal, cost),
         }
     end
     return out
@@ -58,7 +59,15 @@ local function side(src, t, costs)
         if (t.cooldown or 0) > m.time then m.cooldownLeftOut = t.cooldown end
     end
     if m.periodic > 0 and m.periodicTime and m.periodicTime > 0 then m.periodicPerSec = m.periodic / m.periodicTime end
+    -- a totem's pulses are its DPS or HPS, not a DoT or HoT
+    if t.pulsing and m.direct == 0 and m.periodicPerSec then m.totem = true end
     if m.direct > 0 and m.periodic > 0 then m.total = m.direct + m.periodic end
+    -- a totem that attacks by itself, for as long as it stands
+    if m.perHit > 0 and t.attack then
+        m.attackEvery = t.attack
+        m.perSec = m.perHit / t.attack
+        if src.lasts then m.attackTotal = m.perSec * src.lasts end
+    end
     m.perCost = costValues(m, costs)
     return m
 end

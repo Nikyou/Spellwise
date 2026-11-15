@@ -37,7 +37,7 @@ ns.Patterns.frFR = {
         "ennemis à moins de", "adversaires à moins de", "adverses à moins de", "se trouvant à moins de",
         "se trouvent à moins de", "adversaires à portée", "à tous les autres", "pris dans l’explosion", "qu’il traverse",
     },
-    lasts = {"dure {d}", "pendant {d}"},
+    lasts = {"dure {d}", "pendant {d}", "il reste {d}"},
     rules = {
         {"none", "ignore", "{v} point de dégâts{w} par point de mana"},
         -- totems and resurrections name health that isn't healed, Blessing of Sacrifice moves damage

@@ -39,6 +39,15 @@ function Spells.IsChanneled(spellID)
     return false
 end
 
+-- seconds between a totem's attacks, the text never says. Searing Totem casts its 2.2 sec attack, then waits
+-- 0.225 sec before the next one (combat logs, 1.60.1). German texts say every 2 sec, that's not what happens
+local ATTACKS = {}
+for _, id in ipairs({3599, 6363, 6364, 6365, 10437, 10438}) do ATTACKS[id] = 2.425 end
+
+-- Magma and Healing Stream Totem read like a DoT or HoT, but they pulse for as long as they stand: DPS and HPS
+local PULSING_TOTEMS = {}
+for _, id in ipairs({8190, 10585, 10586, 10587, 5394, 6375, 6377, 10462, 10463}) do PULSING_TOTEMS[id] = true end
+
 function Spells.Timings(spellID, t)
     local info = C_Spell.GetSpellInfo(spellID)
     local cast = type(info) == "table" and number(info.castTime)
@@ -47,6 +56,8 @@ function Spells.Timings(spellID, t)
     t.cooldown = (number(cooldown) or 0) / 1000
     t.gcd = (number(gcd) or 0) / 1000
     t.channeled = Spells.IsChanneled(spellID)
+    t.attack = ATTACKS[spellID]
+    t.pulsing = PULSING_TOTEMS[spellID]
     return t
 end
 
@@ -189,15 +200,6 @@ function Spells.CritKind(spellID, school, isHeal)
     if Spells.ranged[spellID] then return "ranged" end
     if not isHeal and (school == nil or school == "PHYSICAL") then return "melee" end
     return "spell"
-end
-
--- totems never crit
-function Spells.CanCrit(spellID)
-    if not Spells.totems then
-        Spells.totems = {}
-        for _, id in ipairs(ns.CritData.totems) do Spells.totems[id] = true end
-    end
-    return not Spells.totems[spellID]
 end
 
 -- pets copy their owner's crit: a hunter's pet takes the higher of melee and ranged, a warlock's pet the spell crit.
