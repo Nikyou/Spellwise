@@ -31,6 +31,8 @@ ns.Patterns.esMX = {
     },
     lasts = {"dura {d}", "durante {d}"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", {"a sí mismo {v} p. de daño", "a sí misma {v} p. de daño", "se autoinflige {v} p. de daño"}},
         {"none", "ignore", "{v} p. de daño{w} por cada punto de maná"},
         -- mana and health that isn't healed
         {"none", "ignore", "con {v} p. de salud"},

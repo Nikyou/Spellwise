@@ -30,6 +30,8 @@ ns.Patterns.ptBR = {
     },
     lasts = {"dura {d}", "por {d}"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", {"{v} de dano{w} a si próprio", "{v} de dano{w} a si própria"}},
         {"none", "ignore", "{v} de dano{w} para cada ponto de mana"},
         -- health that isn't healed: totems, healthstones, Life Tap
         {"none", "ignore", "com {v} pontos de vida"},

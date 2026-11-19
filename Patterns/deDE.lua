@@ -36,6 +36,8 @@ ns.Patterns.deDE = {
     },
     lasts = {"hält {d} lang an", "{d} lang"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", {"ihm selbst {v} punkt(e) {s}schaden", "ihr selbst {v} punkt(e) {s}schaden"}},
         {"none", "ignore", "manapunkt erleidet das ziel {v} punkt {s}schaden"},
         -- a resurrection, a soulstone, a totem's own health or a healthstone name health that isn't healed
         {"none", "ignore", {"mit {v} punkt(en) gesundheit", "mit {v} gesundheit", "um {v} punkt(e) gesundheit wiederherzustellen"}},

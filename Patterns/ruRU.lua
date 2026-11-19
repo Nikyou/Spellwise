@@ -33,6 +33,8 @@ ns.Patterns.ruRU = {
     },
     lasts = {"ремя действия – {d}", "временем существования {d}", "в течение {d}"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", "заклинателю {v} ед. урона"},
         {"none", "ignore", "{v} ед. урона{w} за каждую единицу"},
         -- a resurrection, a soulstone, Life Tap, a healthstone or Dark Sacrifice name health that isn't healed.
         -- Seal of Fury's taunt "в течение 3 сек." would join its damage into damage over time

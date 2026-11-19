@@ -38,6 +38,8 @@ ns.Patterns.enUS = {
     },
     lasts = {"lasts {d}", "for {d}"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", {"{v} {s}damage to himself", "{v} {s}damage to herself"}},
         -- Feedback: damage per mana burned is a rate, not an amount
         {"none", "ignore", "{v} {s}damage for each point of mana"},
         {"none", "ignore", {"to life with {v} health", "healing done for {d}", "for {n}% of your maximum health",

@@ -44,6 +44,8 @@ ns.Patterns.koKR = {
         {"drain", "tick", "{d}마다 {v}의 생명력을 흡수"},
         -- Penance hits at once and then ticks, Frozen Orb only hits what it passes through
         {"dmg", "direct", {"즉시, 그리고 {d} 동안 {d}마다 {v}의 {s}피해", "{d}마다 통과하는 {w}{v}의 {s}피해"}},
+        -- Hellfire burns the caster too, the tick is what the enemies take
+        {"dmg", "tick", "{d}마다 시전자에게 {n}의 {s}피해를 입히고 {w}{v}의 {s}피해"},
         {"dmg", "tick", "매초마다 각각 {v}의 {s}피해", interval = 1},
         {"dmg", "tick", {"{d}마다 {w}{v}의 {s}피해", "{d}마다 {n}미터 {w}{v}의 {s}피해"}},
         {"heal", "tick", {"매초마다 {v}의 생명력"}, interval = 1},

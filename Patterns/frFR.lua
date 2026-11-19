@@ -39,6 +39,8 @@ ns.Patterns.frFR = {
     },
     lasts = {"dure {d}", "pendant {d}", "il reste {d}"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", "il subit {v} points de dégâts"},
         {"none", "ignore", "{v} point de dégâts{w} par point de mana"},
         -- totems and resurrections name health that isn't healed, Blessing of Sacrifice moves damage
         {"none", "ignore", {"dispose de {v} points de vie", "rappelle à la vie{w} et lui rend {v} points de vie",
