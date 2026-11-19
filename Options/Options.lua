@@ -269,8 +269,7 @@ function Options:ShowProfileExport()
     })
 end
 
--- Import: paste a string, then pick a new profile or the current one. either way the string replaces the profile,
--- settings it doesn't carry go back to their defaults
+-- Import replaces the profile, new or current. what the string lacks goes back to default
 
 local function importOver(data, name)
     local db = ns.addon.db

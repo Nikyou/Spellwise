@@ -308,7 +308,7 @@ function Parser.Parse(text, pack, harmful, helpful)
     text = Parser.Normalize(text, pack)
     local r = newResult()
     r.area = containsAny(text, pack.area)
-    -- Execute and Ferocious Bite turn the rage or energy left over into damage. read it first, it sits outside the rows
+    -- Execute and Ferocious Bite: rage or energy left over adds damage. read first, it sits outside the rows
     for _, variant in ipairs(pack.compiledExtra) do
         local a, b, caps = match(text, {variant}, pack)
         if a then
@@ -338,7 +338,7 @@ function Parser.Parse(text, pack, harmful, helpful)
         return r
     end
     readRules(r, text, pack, harmful, helpful)
-    -- "Drain Life: transfers 50 health" or "a Shadow lash, dealing 140 to 209" name the school away from the amount
+    -- Shadow Cleave names the school away from the amount
     if not r.dmg.school and Parser.HasDamage(r) then r.dmg.school = findSchool(text, pack) end
     return r
 end

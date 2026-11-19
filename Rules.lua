@@ -33,8 +33,8 @@ function Rules.Clear()
     changed()
 end
 
--- what the player typed as an average. like in spell texts, a separator before exactly three digits groups them:
--- "1,500" and "1.500" are 1500, "1,5" is one and a half. nil for anything but a plain number above 0
+-- a typed average. a separator before exactly three digits groups them: "1,500" is 1500, "1,5" is 1.5.
+-- nil unless it's a number above 0
 function Rules.ParseAverage(text)
     text = (text or ""):gsub("%s", "")
     if not text:match("^%d[%d,.]*$") then return nil end
@@ -73,8 +73,7 @@ function Rules.Describe(entry)
     return format(L["%s: average damage %s"], entry.label, tostring(entry.rule.avg))
 end
 
--- a new table, parsed may be the cached one. a spell that only ticks keeps ticking (a channel still divides by
--- its channel time), anything else gets the average as direct damage
+-- a new table, parsed may be cached. a spell that only ticks keeps ticking, so a channel still divides by its time
 function Rules.Pinned(parsed, average)
     local dmg = parsed and parsed.dmg
     local ticks = dmg and dmg.direct == 0 and dmg.periodic > 0

@@ -39,12 +39,12 @@ function Spells.IsChanneled(spellID)
     return false
 end
 
--- seconds between a totem's attacks, the text never says. Searing Totem casts its 2.2 sec attack, then waits
--- 0.225 sec before the next one (combat logs, 1.60.1). German texts say every 2 sec, that's not what happens
+-- seconds between attacks, texts don't say. Searing Totem casts for 2.2 sec, then waits 0.225 (combat logs).
+-- German texts say 2 sec, that's wrong
 local ATTACKS = {}
 for _, id in ipairs({3599, 6363, 6364, 6365, 10437, 10438}) do ATTACKS[id] = 2.425 end
 
--- Magma and Healing Stream Totem read like a DoT or HoT, but they pulse for as long as they stand: DPS and HPS
+-- Magma and Healing Stream Totem read like a DoT or HoT, but pulse while they stand: DPS and HPS
 local PULSING_TOTEMS = {}
 for _, id in ipairs({8190, 10585, 10586, 10587, 5394, 6375, 6377, 10462, 10463}) do PULSING_TOTEMS[id] = true end
 
