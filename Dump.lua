@@ -64,8 +64,7 @@ local function value(v)
     return tostring(v)
 end
 
--- in case something else blanks the box: a line the game draws with no width is swapped for its bytes, so the dump
--- still shows and says what was there
+-- if something else blanks the box, a line drawn with no width is swapped for its bytes
 local probe
 local function checkLines(lines)
     if not probe then
@@ -223,8 +222,9 @@ end
 local function build()
     local out, missing, printed = {}, {}, {}
     header(out, current.tokens)
-    -- a hovered dump says where the spell came from, the last one we saw isn't the one under the mouse
+    -- a hovered dump says where its spell came from
     if current.picked then out[#out + 1] = "  picked = " .. current.picked end
+    for i, text in ipairs(current.shown or {}) do out[#out + 1] = "  shown[" .. i .. "] = " .. text end
     for _, section in ipairs(current.sections) do
         if section.token then
             out[#out + 1] = ""
@@ -287,6 +287,20 @@ end)
 
 local function lists() return ns.DumpSpells end
 
+-- the hovered tooltip's lines, a pet's spell has other numbers there
+local function shownLines()
+    if not (GameTooltip:IsShown() and GameTooltip.GetTooltipData) then return nil end
+    local ok, data = pcall(GameTooltip.GetTooltipData, GameTooltip)
+    if not ok or isSecret(data) or type(data) ~= "table" or isSecret(data.lines) or type(data.lines) ~= "table" then return nil end
+    local list = {}
+    for _, line in ipairs(data.lines) do
+        if type(line) == "table" and not isSecret(line) then
+            list[#list + 1] = "type=" .. value(line.type) .. " left=" .. value(line.leftText) .. " right=" .. value(line.rightText)
+        end
+    end
+    return list
+end
+
 function Dump.ClassList()
     local tokens = {}
     for _, token in ipairs(lists().order) do if token ~= "test" then tokens[#tokens + 1] = token end end
@@ -325,7 +339,7 @@ function Dump.Start(arg)
             return
         end
     end
-    return start({sections = {{ids = {spellID}}}, picked = picked})
+    return start({sections = {{ids = {spellID}}}, picked = picked, shown = picked and shownLines() or nil})
 end
 
 function Dump.CurrentText() return current and current.text end

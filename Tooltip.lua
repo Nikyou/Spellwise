@@ -149,13 +149,29 @@ local function withCrit(spellID, result, unit)
     return Metrics.WithCrit(result, crit.dmg.factor, crit.heal.factor), crit
 end
 
--- fills out with text, kind pairs. costs and max are the unit's, player or pet
-function Tooltip.Build(spellID, unit, out)
+-- a pet's spell as its tooltip has it, the plain description uses your stats (Lash of Pain: 248 there, 116 on
+-- the pet bar). the first line after the name with an amount
+local function petDescription(spellID, lines, harmful, helpful)
+    if type(lines) ~= "table" or isSecret(lines) then return nil end
+    for i = 2, #lines do
+        local line = lines[i]
+        local text = type(line) == "table" and not isSecret(line) and Spells.Text(line.leftText)
+        if text and text:find("%d") then
+            local result = parse(spellID, text, harmful, helpful)
+            if result and (result.found or result.weapon) then return text end
+        end
+    end
+end
+
+-- fills out with text, kind pairs. costs and max are the unit's. petLines: a pet tooltip's data lines
+function Tooltip.Build(spellID, unit, out, petLines)
     wipe(out)
     local rule = ns.Rules.Get(spellID)
     if rule and rule.hide then return out end
 
-    local desc, secret = Spells.Description(spellID)
+    local desc, secret
+    if unit == "pet" and petLines then desc = petDescription(spellID, petLines, Spells.Flags(spellID)) end
+    if not desc then desc, secret = Spells.Description(spellID) end
     local result
     if desc then
         local harmful, helpful = Spells.Flags(spellID)
@@ -254,8 +270,7 @@ local function comboRowLines(out, combo, t, costs, o, fmt)
     end
 end
 
--- one line per cost. they come from the API, so they show in every language. costTexts gets every cost for
--- the details, its line on or off
+-- costs come from the API, so every language has them. costTexts gets them all for the details
 local function costLines(out, costs, free, basePercents, unit, fmt)
     local profile = db().profile
     local forPet = unit == "pet"
@@ -306,7 +321,7 @@ function Tooltip.Lines(result, t, costs, free, basePercents, unit, details, out,
     end
     costLines(out, costs, free, basePercents, unit, fmt)
 
-    -- the details get built for the hint too, the hint only stands in for them when they have something
+    -- built for the hint too, it only shows when the details have something
     if m and details and #out > 0 then
         local before = #out
         local s = wipe(spellBuf)
@@ -378,7 +393,7 @@ local function onCleared(tooltip)
         if s.fonts[i] then s.lines[i]:SetFontObject(s.fonts[i]) end
         s.lines[i], s.fonts[i] = nil, nil
     end
-    s.count, s.spellID, s.unit = 0, nil, nil
+    s.count, s.spellID, s.unit, s.petLines = 0, nil, nil, nil
 end
 
 local function stateOf(tooltip)
@@ -403,27 +418,25 @@ local function appendLine(tooltip, s, text, color, path, size, flags)
     end
 end
 
-local function addLines(tooltip, spellID, unit)
+local function addLines(tooltip, spellID, unit, petLines)
     local s = stateOf(tooltip)
-    s.spellID, s.unit, lastSpellID = spellID, unit, spellID
-    Tooltip.Build(spellID, unit, built)
+    s.spellID, s.unit, s.petLines, lastSpellID = spellID, unit, petLines, spellID
+    Tooltip.Build(spellID, unit, built, petLines)
     if #built == 0 then return end
     local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
     for i = 1, #built, 2 do appendLine(tooltip, s, built[i], Tooltip.Color(built[i + 1], built.school), path, size, flags) end
     tooltip:Show()
 end
 
--- only action buttons redraw their tooltip on a key press, so elsewhere the hint turns into the details in place.
--- lines can't be removed, letting go waits for the next redraw. skipped in combat, the text can be secret there
+-- only action buttons redraw on a key press, elsewhere the hint turns into the details in place. lines can't
+-- be removed, so letting go waits for a redraw. not in combat, the text can be secret
 local function onModifier()
     local mode = db() and db().profile.lines.details
     if not MODIFIERS[mode] or not modifierDown(mode) or InCombatLockdown() then return end
     for tooltip, s in pairs(states) do
         if s.count > 0 and s.spellID and tooltip:IsShown() then
-            Tooltip.Build(s.spellID, s.unit, built)
-            -- built holds text, kind pairs. the details replace the hint, so there are at least as many lines as
-            -- the tooltip has of ours: the first ones get new text, the rest are added. fewer means something
-            -- else changed, that waits for the next redraw
+            Tooltip.Build(s.spellID, s.unit, built, s.petLines)
+            -- the details replace the hint, so there are as many lines or more: ours get new text, the rest are added
             local pairsCount = #built / 2
             if pairsCount >= s.count then
                 local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
@@ -457,7 +470,7 @@ local function actionSpell(slot)
     end
 end
 
--- the pet bar's and the spellbook's own idea of the spell, for tooltips whose data isn't a spell (a pet action)
+-- the slot's spell, a pet action tooltip has no spell ID
 local function petActionSpell(slot)
     if type(slot) ~= "number" or isSecret(slot) or not GetPetActionInfo then return nil end
     return Spells.Number((select(7, GetPetActionInfo(slot))))
@@ -495,15 +508,23 @@ end
 local function onTooltipData(tooltip, data)
     if not db() or isSecret(data) then return end
     local shown, spellID, unit = source(tooltip, data)
-    if shown and spellID then addLines(tooltip, spellID, unit) end
+    if shown and spellID then addLines(tooltip, spellID, unit, unit == "pet" and data.lines or nil) end
 end
 
--- the pet bar and the pet spellbook, when the processor didn't hand them over as a spell
+-- the data lines of a tooltip the processor didn't hand over
+local function tooltipLines(getter, ...)
+    local get = C_TooltipInfo and C_TooltipInfo[getter]
+    if not get then return nil end
+    local ok, data = pcall(get, ...)
+    if ok and type(data) == "table" and not isSecret(data) then return data.lines end
+end
+
+-- pet bar and pet spellbook tooltips that skip the processor
 local function onPetAction(tooltip, slot)
     local s = states[tooltip]
     if not db() or (s and s.spellID) then return end
     local spellID = petActionSpell(slot)
-    if spellID and db().profile.pets.actionBar then addLines(tooltip, spellID, "pet") end
+    if spellID and db().profile.pets.actionBar then addLines(tooltip, spellID, "pet", tooltipLines("GetPetAction", slot)) end
 end
 
 local function onSpellBookItem(tooltip, slot, bank)
@@ -511,8 +532,11 @@ local function onSpellBookItem(tooltip, slot, bank)
     if not db() or (s and s.spellID) then return end
     local spellID = spellBookSpell(slot, bank)
     local profile = db().profile
-    local shown = isPetBank(bank) and profile.pets.spellbook or (not isPetBank(bank) and profile.show.spellbook)
-    if spellID and shown then addLines(tooltip, spellID, isPetBank(bank) and "pet" or "player") end
+    local pet = isPetBank(bank)
+    local shown = pet and profile.pets.spellbook or (not pet and profile.show.spellbook)
+    if spellID and shown then
+        addLines(tooltip, spellID, pet and "pet" or "player", pet and tooltipLines("GetSpellBookItem", slot, bank) or nil)
+    end
 end
 
 -- what the tooltip says it shows, for the dump
@@ -541,8 +565,7 @@ function Tooltip.Enable()
     events:RegisterEvent("MODIFIER_STATE_CHANGED")
     events:SetScript("OnEvent", function() ns.Guard(onModifier) end)
     local function post(tooltip, data) ns.Guard(onTooltipData, tooltip, data) end
-    -- pet abilities can come as a pet action instead of a spell, or not through the processor at all. the hooks
-    -- run after the processor and skip a tooltip that already has our lines
+    -- pet tooltips come as a pet action or skip the processor. the hooks leave a tooltip with our lines alone
     if GameTooltip.SetPetAction then
         hooksecurefunc(GameTooltip, "SetPetAction", function(self, slot) ns.Guard(onPetAction, self, slot) end)
     end
