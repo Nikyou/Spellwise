@@ -160,7 +160,7 @@ local function costLine(entry)
     return concat(parts, " ")
 end
 
--- false while the description hasn't loaded
+-- true once there is something to print: the text, or "no such spell"
 local function spell(out, spellID)
     local function add(key, text) out[#out + 1] = "  " .. key .. " = " .. text end
     out[#out + 1] = ""
@@ -203,7 +203,8 @@ local function spell(out, spellID)
 end
 
 local current
-local waiting = {}
+local waiting = {} -- asked to load, no answer yet
+local answered = {} -- the load came back. still no text then means the spell has none (Attack, Auto Shot)
 local events = CreateFrame("Frame")
 local refreshQueued = false
 
@@ -218,10 +219,12 @@ local function show()
     })
 end
 
-local function render()
-    if not current then return end
-    local out, missing, printed = {}, 0, {}
+-- the text of every section, and the spells still loading
+local function build()
+    local out, missing, printed = {}, {}, {}
     header(out, current.tokens)
+    -- a hovered dump says where the spell came from, the last one we saw isn't the one under the mouse
+    if current.picked then out[#out + 1] = "  picked = " .. current.picked end
     for _, section in ipairs(current.sections) do
         if section.token then
             out[#out + 1] = ""
@@ -233,38 +236,52 @@ local function render()
                 out[#out + 1] = "== spell " .. spellID .. "  (above)"
             else
                 printed[spellID] = true
-                if not spell(out, spellID) then
-                    missing = missing + 1
-                    if not waiting[spellID] then
-                        waiting[spellID] = true
-                        C_Spell.RequestLoadSpellData(spellID)
-                    end
-                end
+                if not spell(out, spellID) and not answered[spellID] then missing[#missing + 1] = spellID end
             end
         end
     end
-    if missing > 0 then
+    checkLines(out)
+    return concat(out, "\n"), missing
+end
+
+local function requestLoads(missing)
+    for _, spellID in ipairs(missing) do
+        if not waiting[spellID] then
+            waiting[spellID] = true
+            C_Spell.RequestLoadSpellData(spellID)
+        end
+    end
+    if #missing > 0 then
         events:RegisterEvent("SPELL_DATA_LOAD_RESULT")
         events:RegisterEvent("SPELL_TEXT_UPDATE")
     else
         events:UnregisterAllEvents()
     end
-    checkLines(out)
-    current.text = concat(out, "\n")
-    current.missing = missing
+end
+
+-- a refresh after the window was closed stops there, it doesn't open it again
+local function render(refresh)
+    if not current then return end
+    if refresh and not ns.Options:IsDialogShown("dump") then
+        events:UnregisterAllEvents()
+        return
+    end
+    local text, missing = build()
+    requestLoads(missing)
+    current.text, current.missing = text, #missing
     show()
-    return current.text, missing
+    return text, #missing
 end
 
 -- loads arrive one by one, so rebuild once shortly after the first
 events:SetScript("OnEvent", function(_, _, spellID)
     if isSecret(spellID) or not waiting[spellID] then return end
-    waiting[spellID] = nil
+    waiting[spellID], answered[spellID] = nil, true
     if refreshQueued then return end
     refreshQueued = true
     C_Timer.After(REFRESH_DELAY, function()
         refreshQueued = false
-        ns.Guard(render)
+        ns.Guard(render, true)
     end)
 end)
 
@@ -279,6 +296,7 @@ end
 local function start(spec)
     current = spec
     wipe(waiting)
+    wipe(answered)
     return render()
 end
 
@@ -293,9 +311,9 @@ function Dump.Start(arg)
     elseif data[key] and key ~= "order" then
         return start({sections = {{token = key, ids = data[key]}}})
     end
-    local spellID
+    local spellID, picked
     if arg == "" then
-        spellID = ns.Tooltip.HoveredSpellID()
+        spellID, picked = ns.Tooltip.HoveredSpellID()
         if not spellID then
             ns.Print(L["Hover a spell or name one: /sp dump <spell>"])
             return
@@ -307,7 +325,7 @@ function Dump.Start(arg)
             return
         end
     end
-    return start({sections = {{ids = {spellID}}}})
+    return start({sections = {{ids = {spellID}}}, picked = picked})
 end
 
 function Dump.CurrentText() return current and current.text end

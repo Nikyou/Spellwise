@@ -202,14 +202,13 @@ function addon:OnEnable()
     ns.Tooltip.Enable()
 end
 
--- names only work for spells the character knows
+-- a spell ID, or a name of a spell the character knows. nil when the game has no such spell
 function ns.ResolveSpell(text)
     text = strtrim(text or "")
     if text == "" then return nil end
-    local id = tonumber(text)
+    local id = text:match("^%d+$") and tonumber(text)
     local info = C_Spell.GetSpellInfo(id or text)
     if type(info) == "table" and not isSecret(info.spellID) and type(info.spellID) == "number" then return info.spellID end
-    return id
 end
 
 local function printHelp()
@@ -229,48 +228,64 @@ local function printHelp()
     line("rules", L["list the spell rules"])
 end
 
+-- the spell named after the command, or a message saying why there's none
+local function spellArgument(text, usage)
+    if text == "" then return addon:Print(usage) end
+    local id = ns.ResolveSpell(text)
+    if not id then addon:Print(L["No such spell. Names only work for spells you know."]) end
+    return id
+end
+
+-- /sp <command> <rest>
+local COMMANDS = {}
+
+function COMMANDS.help() printHelp() end
+function COMMANDS.reset() ns.Options:ResetPosition() end
+function COMMANDS.dump(rest) ns.Dump.Start(rest) end
+
+function COMMANDS.hide(rest)
+    local id = spellArgument(rest, L["Usage: /sp hide <spell ID or name>"])
+    if not id then return end
+    ns.Rules.Hide(id)
+    addon:Print(format(L["Lines hidden on %s."], ns.Rules.SpellLabel(id)))
+end
+
+function COMMANDS.show(rest)
+    -- a bare ID too, the rule may be for a spell this client doesn't have
+    local bare = rest:match("^%d+$")
+    local id = bare and tonumber(bare) or spellArgument(rest, L["Usage: /sp show <spell ID or name>"])
+    if not id then return end
+    if not ns.Rules.Get(id) then return addon:Print(format(L["%s has no rule."], ns.Rules.SpellLabel(id))) end
+    ns.Rules.Remove(id)
+    addon:Print(format(L["Rule removed from %s."], ns.Rules.SpellLabel(id)))
+end
+
+function COMMANDS.pin(rest)
+    local usage = L["Usage: /sp pin <spell ID or name> <average damage>"]
+    local spell, value = rest:match("^(.-)%s+([%d%.,]+)%s*$")
+    local average = ns.Rules.ParseAverage(value)
+    if not average then return addon:Print(usage) end
+    local id = spellArgument(spell, usage)
+    if not id then return end
+    ns.Rules.Pin(id, average)
+    addon:Print(format(L["Average damage of %s set to %s."], ns.Rules.SpellLabel(id), tostring(average)))
+end
+COMMANDS.setdmg = COMMANDS.pin
+
+function COMMANDS.rules()
+    local list = ns.Rules.List()
+    if #list == 0 then addon:Print(L["No spell rules."]) end
+    for _, entry in ipairs(list) do addon:Print(ns.Rules.Describe(entry)) end
+end
+
 function addon:OnSlashCommand(input)
     local command, nextPos = self:GetArgs(input, 1)
-    command = command and command:lower()
-    local rest = strtrim(input:sub(nextPos or #input + 1))
-    local Rules = ns.Rules
-    if not command then
-        ns.Options:Toggle()
-    elseif command == "help" then
-        printHelp()
-    elseif command == "reset" then
-        ns.Options:ResetPosition()
-    elseif command == "dump" then
-        ns.Dump.Start(rest)
-    elseif command == "hide" or command == "show" then
-        local id = ns.ResolveSpell(rest)
-        if not id then
-            self:Print(command == "hide" and L["Usage: /sp hide <spell ID or name>"] or L["Usage: /sp show <spell ID or name>"])
-        elseif command == "hide" then
-            Rules.Hide(id)
-            self:Print(format(L["Lines hidden on %s."], Rules.SpellLabel(id)))
-        else
-            Rules.Remove(id)
-            self:Print(format(L["Rule removed from %s."], Rules.SpellLabel(id)))
-        end
-    elseif command == "pin" or command == "setdmg" then
-        local spell, value = rest:match("^(.-)%s+([%d%.,]+)%s*$")
-        local id = ns.ResolveSpell(spell)
-        local average = value and tonumber((value:gsub(",", ".")))
-        if not id or not average or average <= 0 then
-            self:Print(L["Usage: /sp pin <spell ID or name> <average damage>"])
-        else
-            Rules.Pin(id, average)
-            self:Print(format(L["Average damage of %s set to %s."], Rules.SpellLabel(id), tostring(average)))
-        end
-    elseif command == "rules" then
-        local list = Rules.List()
-        if #list == 0 then self:Print(L["No spell rules."]) end
-        for _, entry in ipairs(list) do self:Print(Rules.Describe(entry)) end
-    else
-        self:Print(format(L["Unknown command \"%s\"."], command))
-        printHelp()
-    end
+    if not command then return ns.Options:Toggle() end
+    command = command:lower()
+    local run = COMMANDS[command]
+    if run then return run(strtrim(input:sub(nextPos or #input + 1))) end
+    self:Print(format(L["Unknown command \"%s\"."], command))
+    printHelp()
 end
 
 function addon:SetupMinimapButton()

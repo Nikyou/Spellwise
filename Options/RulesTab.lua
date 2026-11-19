@@ -27,8 +27,8 @@ local function save()
         return
     end
     if controls.action.value == "avg" then
-        local average = tonumber(((controls.value:GetText() or ""):gsub(",", ".")))
-        if not average or average <= 0 then
+        local average = ns.Rules.ParseAverage(controls.value:GetText())
+        if not average then
             showError(L["Enter a number above 0."])
             return
         end

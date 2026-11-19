@@ -27,6 +27,7 @@ L["Usage: /sp hide <spell ID or name>"] = true
 L["Usage: /sp show <spell ID or name>"] = true
 L["Lines hidden on %s."] = true
 L["Rule removed from %s."] = true
+L["%s has no rule."] = true
 L["Usage: /sp pin <spell ID or name> <average damage>"] = true
 L["Average damage of %s set to %s."] = true
 L["No spell rules."] = true

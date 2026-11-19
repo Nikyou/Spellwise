@@ -27,6 +27,7 @@ L["Usage: /sp hide <spell ID or name>"] = "Uso: /sp hide <ID ou nome do feitiço
 L["Usage: /sp show <spell ID or name>"] = "Uso: /sp show <ID ou nome do feitiço>"
 L["Lines hidden on %s."] = "Linhas ocultas em %s."
 L["Rule removed from %s."] = "Regra removida de %s."
+L["%s has no rule."] = "%s não tem regra."
 L["Usage: /sp pin <spell ID or name> <average damage>"] = "Uso: /sp pin <ID ou nome do feitiço> <dano médio>"
 L["Average damage of %s set to %s."] = "Dano médio de %s definido como %s."
 L["No spell rules."] = "Nenhuma regra de feitiço."

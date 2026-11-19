@@ -27,6 +27,7 @@ L["Usage: /sp hide <spell ID or name>"] = "사용법: /sp hide <주문 ID 또는
 L["Usage: /sp show <spell ID or name>"] = "사용법: /sp show <주문 ID 또는 이름>"
 L["Lines hidden on %s."] = "%s의 항목을 숨겼습니다."
 L["Rule removed from %s."] = "%s의 규칙을 삭제했습니다."
+L["%s has no rule."] = "%s에는 규칙이 없습니다."
 L["Usage: /sp pin <spell ID or name> <average damage>"] = "사용법: /sp pin <주문 ID 또는 이름> <평균 피해>"
 L["Average damage of %s set to %s."] = "%s의 평균 피해를 %s(으)로 지정했습니다."
 L["No spell rules."] = "주문 규칙이 없습니다."

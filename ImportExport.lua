@@ -18,7 +18,10 @@ local ENUMS = {
 }
 local FONT_SIZE = {8, 24}
 
-local function color(value, default)
+-- a finite number, not NaN or inf
+local function finite(n) return type(n) == "number" and n == n and n > -math.huge and n < math.huge end
+
+local function color(value)
     if type(value) ~= "table" then return nil end
     local out = {}
     for i = 1, 3 do
@@ -29,13 +32,14 @@ local function color(value, default)
     return out
 end
 
--- only values with the default's type get through, a broken string can't break the profile
+-- only values with the default's type get through, a broken string can't break the profile.
+-- a default that's a list, {r, g, b}, is a colour
 local function sanitize(source, defaults)
     local out = {}
     for key, default in pairs(defaults) do
         local value = source[key]
         if type(default) == "table" and default[1] ~= nil then
-            out[key] = color(value, default)
+            out[key] = color(value)
         elseif type(default) == "table" then
             if type(value) == "table" then out[key] = sanitize(value, default) end
         elseif type(value) == type(default) then
@@ -54,7 +58,7 @@ local function sanitizeResources(source)
     local out = {}
     if type(source) ~= "table" then return out end
     for powerType, settings in pairs(source) do
-        if type(powerType) == "number" and type(settings) == "table" then
+        if ns.Resources.TYPES[powerType] and type(settings) == "table" then
             out[powerType] = {dmg = settings.dmg == true, heal = settings.heal == true, costLine = settings.costLine == true}
         end
     end
@@ -65,10 +69,10 @@ local function sanitizeRules(source)
     local out, count = {}, 0
     if type(source) ~= "table" then return out, 0 end
     for spellID, rule in pairs(source) do
-        if type(spellID) == "number" and spellID > 0 and type(rule) == "table" then
+        if finite(spellID) and spellID > 0 and spellID % 1 == 0 and type(rule) == "table" then
             if rule.hide == true then
                 out[spellID] = {hide = true}
-            elseif type(rule.avg) == "number" and rule.avg > 0 then
+            elseif finite(rule.avg) and rule.avg > 0 then
                 out[spellID] = {avg = rule.avg}
             end
             if out[spellID] then count = count + 1 end

@@ -27,6 +27,7 @@ L["Usage: /sp hide <spell ID or name>"] = "用法：/sp hide <法術ID或名稱>
 L["Usage: /sp show <spell ID or name>"] = "用法：/sp show <法術ID或名稱>"
 L["Lines hidden on %s."] = "已隱藏%s的資訊行。"
 L["Rule removed from %s."] = "已刪除%s的規則。"
+L["%s has no rule."] = "%s沒有規則。"
 L["Usage: /sp pin <spell ID or name> <average damage>"] = "用法：/sp pin <法術ID或名稱> <平均傷害>"
 L["Average damage of %s set to %s."] = "%s的平均傷害已設為%s。"
 L["No spell rules."] = "沒有法術規則。"

@@ -245,9 +245,13 @@ function Options:ShowDialog(opts)
     return dialog
 end
 
-function Options:DialogText(instance)
+function Options:IsDialogShown(instance)
     local dialog = dialogs[instance or "main"]
-    return dialog and dialog:IsShown() and dialog.input.edit:GetText() or nil
+    return dialog ~= nil and dialog:IsShown()
+end
+
+function Options:DialogText(instance)
+    return self:IsDialogShown(instance) and dialogs[instance or "main"].input.edit:GetText() or nil
 end
 
 function Options:Confirm(message, buttons) self:ShowDialog({title = L["Please confirm"], message = message, buttons = buttons}) end
@@ -265,60 +269,55 @@ function Options:ShowProfileExport()
     })
 end
 
-function Options:ShowProfileImport()
-    local IE = ns.ImportExport
+-- Import: paste a string, then pick a new profile or the current one. either way the string replaces the profile,
+-- settings it doesn't carry go back to their defaults
+
+local function importOver(data, name)
     local db = ns.addon.db
+    if name then db:SetProfile(name) end
+    db:ResetProfile()
+    ns.ImportExport.Apply(data)
+end
+
+local function importIntoNew(data, name)
+    name = strtrim(name or "")
+    if name == "" then return Options:ShowMessage(L["Enter a profile name."]) end
+    for _, existing in ipairs(ns.addon.db:GetProfiles()) do
+        if existing == name then
+            return Options:Confirm(format(L["The profile \"%s\" already exists. Overwrite it?"], name),
+                                   {{label = L["Overwrite"], onClick = function() importOver(data, name) end}, {label = L["Cancel"]}})
+        end
+    end
+    importOver(data, name)
+end
+
+local function importIntoCurrent(data)
+    Options:Confirm(format(L["Overwrite \"%s\"?"], ns.addon.db:GetCurrentProfile()),
+                    {{label = L["Overwrite"], onClick = function() importOver(data) end}, {label = L["Cancel"]}})
+end
+
+local function chooseTarget(text)
+    local data, err = ns.ImportExport.Decode(text)
+    if not data then return Options:ShowMessage(err) end
+    Options:ShowDialog({
+        title = L["Import profile"],
+        message = ns.ImportExport.Summary(data) .. "\n\n"
+          .. format(L["Import into a new profile or over \"%s\"?"], ns.addon.db:GetCurrentProfile()),
+        field = {label = L["New profile name"], text = L["Imported"]},
+        buttons = {
+            {label = L["Create profile"], onClick = function(name) importIntoNew(data, name) end},
+            {label = L["Into current"], onClick = function() importIntoCurrent(data) end},
+            {label = L["Cancel"]},
+        },
+    })
+end
+
+function Options:ShowProfileImport()
     self:ShowDialog({
         title = L["Import profile"],
         message = L["Paste a profile string (Ctrl+V)."],
         input = {text = ""},
-        buttons = {
-            {
-                label = L["Import"],
-                onClick = function(text)
-                    local data, err = IE.Decode(text)
-                    if not data then
-                        self:ShowMessage(err)
-                        return
-                    end
-                    local function intoNew(name)
-                        name = strtrim(name or "")
-                        if name == "" then
-                            self:ShowMessage(L["Enter a profile name."])
-                            return
-                        end
-                        local exists = false
-                        for _, existing in ipairs(db:GetProfiles()) do if existing == name then exists = true end end
-                        local function apply()
-                            db:SetProfile(name)
-                            if exists then db:ResetProfile() end
-                            IE.Apply(data)
-                        end
-                        if exists then
-                            self:Confirm(format(L["The profile \"%s\" already exists. Overwrite it?"], name),
-                                         {{label = L["Overwrite"], onClick = apply}, {label = L["Cancel"]}})
-                        else
-                            apply()
-                        end
-                    end
-                    self:ShowDialog({
-                        title = L["Import profile"],
-                        message = IE.Summary(data) .. "\n\n"
-                          .. format(L["Import into a new profile or over \"%s\"?"], db:GetCurrentProfile()),
-                        field = {label = L["New profile name"], text = L["Imported"]},
-                        buttons = {
-                            {label = L["Create profile"], onClick = intoNew}, {
-                                label = L["Into current"],
-                                onClick = function()
-                                    self:Confirm(format(L["Overwrite \"%s\"?"], db:GetCurrentProfile()),
-                                                 {{label = L["Overwrite"], onClick = function() IE.Apply(data) end}, {label = L["Cancel"]}})
-                                end,
-                            }, {label = L["Cancel"]},
-                        },
-                    })
-                end,
-            }, {label = L["Cancel"]},
-        },
+        buttons = {{label = L["Import"], onClick = chooseTarget}, {label = L["Cancel"]}},
     })
 end
 
@@ -333,6 +332,17 @@ function Options.Help(parent, text, x, y, width)
     label:SetPoint("TOPLEFT", x, y)
     label:SetWidth(width)
     return label
+end
+
+-- two columns per tab
+Options.COLUMN = 390
+Options.RIGHT = Options.COLUMN + 30
+
+function Options.Profile() return ns.addon.db.profile end
+
+-- a check box callback that saves profile[section][key]
+function Options.Setter(section, key)
+    return function(checked) ns.addon.db.profile[section][key] = checked end
 end
 
 function Options.Column(parent, x, width)
