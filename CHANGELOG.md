@@ -1,3 +1,10 @@
+#### 1.3.1
+* Pet abilities now show their lines on the pet bar and in the pet spellbook.
+* Kidney Shot, Slice and Dice and Expose Armor no longer show a lone "Combo points" line.
+* Hellfire: the damage you take yourself is no longer counted as the spell's damage.
+* Crit: Drain Life, Siphon Life and Shadow Cleave count as spells, not melee. Lightning Shield's charges add up.
+* Importing into the current profile replaces it instead of mixing the two.
+
 #### 1.3
 * Totems crit again with "Include crit" on. Elemental Fury now counts for Searing and Magma Totem.
 * Searing Totem shows DPS and DPM, at one attack every 2.425 sec (from WoWSims). Per hit moved to the details.
