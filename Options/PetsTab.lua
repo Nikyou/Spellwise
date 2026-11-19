@@ -4,19 +4,14 @@ local L = ns.L
 local W, Options = ns.Widgets, ns.Options
 
 local controls = {}
-local COLUMN = 390
-local RIGHT = COLUMN + 30
+local COLUMN, RIGHT = Options.COLUMN, Options.RIGHT
 
 local POINTS = {}
 for n = 1, 5 do POINTS[n] = {value = n, text = tostring(n)} end
 
-local function profile() return ns.addon.db.profile end
+local profile = Options.Profile
 
-local function setter(section, key)
-    return function(checked)
-        profile()[section][key] = checked
-    end
-end
+local setter = Options.Setter
 
 local function create(parent)
     local left = Options.Column(parent, 0, COLUMN)

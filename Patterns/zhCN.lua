@@ -28,6 +28,8 @@ ns.Patterns.zhCN = {
     },
     lasts = {"持续{d}", "在{d}内"},
     rules = {
+        -- Hellfire burns the caster too, that's not damage the spell deals
+        {"none", "ignore", "自身造成{v}点{s}伤害"},
         -- a resurrection, a soulstone, a healthstone, Dark Sacrifice or Blessing of Sacrifice name health that isn't healed.
         -- Demon Armor's regeneration and Devour Magic's pet heal are left out
         {"none", "ignore", {"复活,并恢复{v}点生命值", "可以立刻恢复{v}点生命值", "吞噬自身的{v}点生命值", "分担{v}点伤害",

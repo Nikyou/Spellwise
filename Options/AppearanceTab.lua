@@ -7,8 +7,7 @@ local W, Options = ns.Widgets, ns.Options
 local controls = {}
 local preview = {lines = {}, samples = {}}
 
-local COLUMN = 390
-local RIGHT = COLUMN + 30
+local COLUMN, RIGHT = Options.COLUMN, Options.RIGHT
 local PREVIEW_LINES = 16
 
 local OUTLINES = {

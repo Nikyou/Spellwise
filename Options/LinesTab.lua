@@ -6,8 +6,7 @@ local W, Options = ns.Widgets, ns.Options
 local controls = {}
 local resourceBoxes = {} -- {box, powerType, key}
 
-local COLUMN = 390
-local RIGHT = COLUMN + 30
+local COLUMN, RIGHT = Options.COLUMN, Options.RIGHT
 
 -- written out so check_locale sees the keys
 local DESCRIPTIONS = {
@@ -35,13 +34,9 @@ local LABELS = {
     HPF = L["HPF"],
 }
 
-local function profile() return ns.addon.db.profile end
+local profile = Options.Profile
 
-local function setter(section, key)
-    return function(checked)
-        profile()[section][key] = checked
-    end
-end
+local setter = Options.Setter
 
 -- one row per resource: its name, then per cost for damage and healing and the cost line
 local function resourceRow(parent, column, powerType)

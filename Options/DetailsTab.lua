@@ -5,10 +5,9 @@ local W, Options = ns.Widgets, ns.Options
 
 local controls = {}
 local boxes = {} -- [key] = check box
-local COLUMN = 390
-local RIGHT = COLUMN + 30
+local COLUMN, RIGHT = Options.COLUMN, Options.RIGHT
 
-local function profile() return ns.addon.db.profile end
+local profile = Options.Profile
 
 local function detailItems()
     local items = {{value = "NONE", text = L["Never"]}, {value = "ALWAYS", text = L["Always"]}}
