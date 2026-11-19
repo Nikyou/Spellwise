@@ -33,6 +33,22 @@ function Rules.Clear()
     changed()
 end
 
+-- what the player typed as an average. like in spell texts, a separator before exactly three digits groups them:
+-- "1,500" and "1.500" are 1500, "1,5" is one and a half. nil for anything but a plain number above 0
+function Rules.ParseAverage(text)
+    text = (text or ""):gsub("%s", "")
+    if not text:match("^%d[%d,.]*$") then return nil end
+    local head, last = text:match("^(.-)[,.](%d*)$")
+    local plain
+    if head and #last ~= 3 then
+        plain = head:gsub("[,.]", "") .. "." .. last
+    else
+        plain = text:gsub("[,.]", "")
+    end
+    local average = tonumber(plain)
+    if average and average > 0 and average < math.huge then return average end
+end
+
 function Rules.SpellLabel(spellID)
     local name = ns.Spells.Name(spellID)
     return name and format("%s (%d)", name, spellID) or tostring(spellID)
@@ -57,10 +73,14 @@ function Rules.Describe(entry)
     return format(L["%s: average damage %s"], entry.label, tostring(entry.rule.avg))
 end
 
--- a new table, parsed may be the cached one
+-- a new table, parsed may be the cached one. a spell that only ticks keeps ticking (a channel still divides by
+-- its channel time), anything else gets the average as direct damage
 function Rules.Pinned(parsed, average)
+    local dmg = parsed and parsed.dmg
+    local ticks = dmg and dmg.direct == 0 and dmg.periodic > 0
     return {
-        dmg = {direct = average, periodic = 0, perHit = 0, school = parsed and parsed.dmg.school},
+        dmg = {direct = ticks and 0 or average, periodic = ticks and average or 0, duration = ticks and dmg.duration or nil,
+               perHit = 0, school = dmg and dmg.school},
         heal = parsed and parsed.heal or {direct = 0, periodic = 0, absorb = 0},
         area = parsed and parsed.area or false,
         pinned = true,

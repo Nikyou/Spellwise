@@ -113,6 +113,7 @@ local function scaled(side, factor, isHeal)
     out.direct = (side.direct or 0) * factor
     out.periodic = (side.periodic or 0) * factor
     if side.perHit then out.perHit = side.perHit * factor end
+    if side.perCharge then out.perCharge = side.perCharge * factor end
     -- absorbs never crit
     if isHeal then out.absorb = side.absorb end
     return out

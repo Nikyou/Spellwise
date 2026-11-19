@@ -238,6 +238,7 @@ local function apply(r, rule, side, caps, text, pack, clause, tail)
 
     local sideName, slot = slotOf(side, shape)
     if side == "drain" then
+        r.drain = true
         r.dmg.periodic, r.dmg.duration = amount, duration
         r.heal.periodic, r.heal.duration = amount, duration
     else
@@ -328,6 +329,8 @@ function Parser.Parse(text, pack, harmful, helpful)
             r.combo[points] = row
             r.found = r.found or row.found
         end
+        -- Kidney Shot and Slice and Dice list points too, but no amounts
+        if not r.found then r.combo = nil end
         return r
     end
     if containsAny(text, pack.weapon) then
@@ -335,6 +338,8 @@ function Parser.Parse(text, pack, harmful, helpful)
         return r
     end
     readRules(r, text, pack, harmful, helpful)
+    -- "Drain Life: transfers 50 health" or "a Shadow lash, dealing 140 to 209" name the school away from the amount
+    if not r.dmg.school and Parser.HasDamage(r) then r.dmg.school = findSchool(text, pack) end
     return r
 end
 

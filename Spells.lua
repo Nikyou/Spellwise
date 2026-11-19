@@ -191,14 +191,15 @@ local function sheetCrit(kind, school)
     return lastCrit[key]
 end
 
--- "melee", "ranged" or "spell": abilities that need a ranged weapon, physical damage, and everything else
-function Spells.CritKind(spellID, school, isHeal)
+-- "melee", "ranged" or "spell": abilities that need a ranged weapon, physical damage, and everything else.
+-- surelySpell is for heals and drains, whose text may name no school
+function Spells.CritKind(spellID, school, surelySpell)
     if not Spells.ranged then
         Spells.ranged = {}
         for _, id in ipairs(ns.CritData.ranged) do Spells.ranged[id] = true end
     end
     if Spells.ranged[spellID] then return "ranged" end
-    if not isHeal and (school == nil or school == "PHYSICAL") then return "melee" end
+    if not surelySpell and (school == nil or school == "PHYSICAL") then return "melee" end
     return "spell"
 end
 
