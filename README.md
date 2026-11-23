@@ -35,13 +35,16 @@ The numbers come from the tooltip, so your gear bonuses are included.
 * Pet abilities, with their own options.
 * Finishers use the number of combo points you pick (5 by default). The details list every number.
 * Execute and Ferocious Bite: the details show what extra rage or energy deals.
+* Weapon abilities (Mortal Strike, Backstab, Aimed Shot and more) use your weapon damage and attack power. Attack, Auto Shot and wand Shoot show your weapons' DPS.
+* Heroic Strike, Cleave, Maul and Raptor Strike: "Added DPS" and per rage on what they add to your swing, "Total DPS" if you want it.
 * Spell rules: hide a spell's lines or set its average damage. Use the Spell rules tab or `/sp hide`, `/sp pin` and `/sp show`.
 * Colours, school tint, font, size, outline, decimals and thousands separator, with a live preview.
 * Profiles with export and import.
 
 ## Notes
 
-* Weapon abilities (Heroic Strike, Sinister Strike) are skipped. Their damage isn't in the tooltip.
+* Weapon imbues, seals and poisons are skipped.
+* Weapon damage is counted before the target's armor. Weapon abilities need a weapon in the hand they use.
 * A finisher's DPS doesn't count the time spent building combo points.
 * Hit chance and resistances aren't counted. Pets use your crit.
 

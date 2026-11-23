@@ -1,3 +1,9 @@
+#### 1.4
+* Weapon abilities like Mortal Strike, Sinister Strike, Shred and Aimed Shot now show their lines, worked out from your weapon damage and attack power.
+* Heroic Strike, Cleave, Maul and Raptor Strike show "Added DPS": what they add to your swing when used on every one. "Total DPS" of the whole swing is an option in the Lines tab.
+* Attack, Auto Shot and wand Shoot show the DPS of your weapons. The details list each hand.
+* Both can be turned off in the Lines tab.
+
 #### 1.3.1
 * Pet abilities now show their lines on the pet bar and in the pet spellbook.
 * Kidney Shot, Slice and Dice and Expose Armor no longer show a lone "Combo points" line.
