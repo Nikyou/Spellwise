@@ -78,7 +78,7 @@ local function side(src, t, costs)
         m.hands, m.perSec, m.attackEvery = src.hands, 0, src.hands[1].every
         for _, hand in ipairs(src.hands) do m.perSec = m.perSec + hand.hit / hand.every end
     end
-    m.strike, m.fromWeapon = src.strike, src.fromWeapon
+    m.strike, m.fromWeapon, m.applied = src.strike, src.fromWeapon, src.applied
     m.perCost = costValues(m, costs)
     return m
 end
@@ -118,11 +118,11 @@ function Metrics.CritAgainst(kind, chance, levelsAbove)
     return math.max(0, chance - 0.01 * levelsAbove)
 end
 
-local function scaled(side, factor, isHeal)
+local function scaled(side, factor, isHeal, noTicks)
     local out = {}
     for k, v in pairs(side) do out[k] = v end
     out.direct = (side.direct or 0) * factor
-    out.periodic = (side.periodic or 0) * factor
+    out.periodic = (side.periodic or 0) * (noTicks and 1 or factor)
     if side.perHit then out.perHit = side.perHit * factor end
     if side.perCharge then out.perCharge = side.perCharge * factor end
     if side.added then out.added = side.added * factor end
@@ -135,16 +135,17 @@ local function scaled(side, factor, isHeal)
     return out
 end
 
--- a new result with crits counted in. on Forever most damage and healing over time can crit too
-function Metrics.WithCrit(parsed, dmgFactor, healFactor)
+-- a new result with crits counted in. on Forever most damage and healing over time can crit too, bleeds included.
+-- noTicks: the ticks can't crit (Lifebloom, Vampiric Touch), Data/CritData.lua lists them
+function Metrics.WithCrit(parsed, dmgFactor, healFactor, noTicks)
     local out = {}
     for k, v in pairs(parsed) do out[k] = v end
-    out.dmg = scaled(parsed.dmg, dmgFactor)
-    out.heal = scaled(parsed.heal, healFactor, true)
+    out.dmg = scaled(parsed.dmg, dmgFactor, false, noTicks)
+    out.heal = scaled(parsed.heal, healFactor, true, noTicks)
     if parsed.extraPerPoint then out.extraPerPoint = parsed.extraPerPoint * dmgFactor end
     if parsed.combo then
         out.combo = {}
-        for points, row in ipairs(parsed.combo) do out.combo[points] = Metrics.WithCrit(row, dmgFactor, healFactor) end
+        for points, row in ipairs(parsed.combo) do out.combo[points] = Metrics.WithCrit(row, dmgFactor, healFactor, noTicks) end
     end
     return out
 end
@@ -172,4 +173,21 @@ function Metrics.WeaponStrike(weapons, ap, normalized, percent, bonus)
         parts[i] = {name = w.name, hit = hit, normal = normalized and w.speed and w.normal or nil}
     end
     return total, {parts = parts, percent = percent, bonus = bonus}
+end
+
+-- Imbues and poisons
+
+-- procs a second off one weapon's swings: a chance per hit, and the swings a lockout after each proc lets go by
+-- (Windfury: 1.5 sec)
+function Metrics.ProcRate(swing, chance, lockout)
+    chance = math.min(1, math.max(0, chance or 0))
+    if chance == 0 or not swing or swing <= 0 then return 0 end
+    local skipped = lockout and lockout > swing and math.ceil(lockout / swing - 1e-9) - 1 or 0
+    return chance / (swing * (1 + chance * skipped))
+end
+
+-- a poison that ticks and stacks with each proc: as many stacks as land within its duration, the maximum at most
+function Metrics.StackedTicks(rate, tick, interval, stacks, duration)
+    if not interval or interval <= 0 then return 0 end
+    return math.min(stacks or 1, rate * (duration or 0)) * tick / interval
 end

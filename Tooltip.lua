@@ -130,6 +130,17 @@ local function detailsState()
 end
 
 -- expected damage and healing with crits. crit = {dmg = {kind, chance, multiplier, factor}, heal = {...}}
+local noTicks
+
+-- a damage or heal over time whose ticks can't crit (Lifebloom, Vampiric Touch)
+local function noTickCrit(spellID)
+    if not noTicks then
+        noTicks = {}
+        for _, id in ipairs(ns.CritData.noTickCrit or {}) do noTicks[id] = true end
+    end
+    return noTicks[spellID] == true
+end
+
 local function withCrit(spellID, result, unit)
     local first = result.combo and result.combo[1] or result
     local school = first.dmg.school
@@ -146,7 +157,16 @@ local function withCrit(spellID, result, unit)
         crit[side] = {kind = kind, chance = chance, multiplier = multiplier,
                       factor = chance and Metrics.CritFactor(chance, multiplier) or 1}
     end
-    return Metrics.WithCrit(result, crit.dmg.factor, crit.heal.factor), crit
+    crit.noTicks = noTickCrit(spellID)
+    return Metrics.WithCrit(result, crit.dmg.factor, crit.heal.factor, crit.noTicks), crit
+end
+
+-- what crits add to an imbue's or poison's procs: kind "melee" for extra attacks, "spell" and a school for the
+-- rest (wowsims). 1 when crit isn't counted
+local function critFor(kind, school)
+    if not db().profile.lines.crit then return 1 end
+    local chance, multiplier = Spells.Crit(0, kind, school)
+    return chance and Metrics.CritFactor(chance, multiplier) or 1
 end
 
 -- a pet's spell as its tooltip has it, the plain description uses your stats (Lash of Pain: 248 there, 116 on
@@ -180,22 +200,26 @@ function Tooltip.Build(spellID, unit, out, petLines)
     elseif not secret then
         requestText(spellID)
     end
-    -- the text only says "weapon damage", the numbers come from the weapons
-    local lines = db().profile.lines
-    if unit == "player" and not (rule and rule.avg) then
-        local strike = ns.WeaponData[spellID]
-        if strike and lines.weapon then
-            result = ns.Weapon.Strike(spellID, strike, desc, result)
-        elseif ns.Weapon.AUTO[spellID] and lines.autoAttack then
-            result = ns.Weapon.Auto(spellID)
-        end
-    end
-    if rule and rule.avg then result = ns.Rules.Pinned(result, rule.avg) end
-
     wipe(spellCosts)
     wipe(spellFree)
     wipe(spellPercents)
     Spells.Costs(spellID, unit, spellCosts, spellFree, spellPercents)
+
+    -- the text only says "weapon damage", the numbers come from the weapons
+    local lines = db().profile.lines
+    if unit == "player" and not (rule and rule.avg) then
+        local strike, imbue = ns.WeaponData[spellID], ns.ImbueData[spellID]
+        if imbue and lines.weapon then
+            local info = ns.Weapon.Imbue(spellID, imbue, critFor)
+            return Tooltip.ImbueLines(info, spellCosts, spellFree, spellPercents, unit, detailsState(), out)
+        elseif strike and lines.weapon then
+            result = ns.Weapon.Strike(spellID, strike, desc, result, critFor)
+        elseif ns.Weapon.AUTO[spellID] and lines.autoAttack then
+            result = ns.Weapon.Auto(spellID, critFor)
+        end
+    end
+    if rule and rule.avg then result = ns.Rules.Pinned(result, rule.avg) end
+
     if result and result.combo and not db().profile.combo.show then result = nil end
     local crit
     if result and not result.weapon then
@@ -256,7 +280,9 @@ end
 local function critLines(out, m, crit, fmt, show)
     for _, side in ipairs({"dmg", "heal"}) do
         local c, part = crit[side], m[side]
-        if part.direct > 0 or part.periodic > 0 or (part.perHit or 0) > 0 then
+        -- a channel's ticks are its direct part by now
+        local ticksOnly = crit.noTicks and (part.channel or part.direct == 0)
+        if not ticksOnly and (part.direct > 0 or part.periodic > 0 or (part.perHit or 0) > 0) then
             if not c.chance then
                 if show.crit then add(out, L["Crit can't be read right now, it's left out"], "info") end
             else
@@ -316,6 +342,25 @@ local function detailLines(out, m, s)
 end
 
 local spellBuf = {}
+
+-- an imbue or poison: what it adds, its cost line, and the details. info is nil when the weapons or the poison's
+-- text can't be read, the cost still shows then
+function Tooltip.ImbueLines(info, costs, free, basePercents, unit, details, out)
+    local profile = db().profile
+    local fmt = ns.NumberFormat()
+    if info then Format.ImbueLines(info, lineOptions(false, free), L, fmt, out) end
+    costLines(out, costs, free, basePercents, unit, fmt)
+    if info and details and #out > 0 then
+        local before = #out
+        for _, text in ipairs(Format.ImbueDetails(info, L, fmt, wipe(breakdownBuf), profile.detailLines)) do add(out, text, "info") end
+        if details == "hint" and #out > before then
+            for i = #out, before + 1, -1 do out[i] = nil end
+            add(out, format(L["Hold %s for details"], Tooltip.ModifierName(profile.lines.details)), "info")
+        end
+    end
+    out.school = info and info.school
+    return out
+end
 
 -- shared with the settings preview. for a free cast, costs holds its last cost above 0
 function Tooltip.Lines(result, t, costs, free, basePercents, unit, details, out, crit)
@@ -507,6 +552,11 @@ local function source(tooltip, data)
     local args = type(info) == "table" and not isSecret(info.getterArgs) and type(info.getterArgs) == "table" and info.getterArgs or {}
     local profile = db().profile
     local dataType = type(data) == "table" and Spells.Number(data.type)
+    -- a poison: the lines go on the item, in the bags or on a bar
+    if dataType and dataType == Enum.TooltipDataType.Item then
+        local shown = profile.lines.weapon and (getter == "GetAction" and profile.show.actionBar or getter ~= "GetAction" and profile.show.other)
+        return shown, ns.Weapon.ItemSpell(Spells.Number(data.id)), "player"
+    end
     local spellID = dataType == Enum.TooltipDataType.Spell and Spells.Number(data.id) or nil
     if getter == "GetAction" then
         return profile.show.actionBar, actionSpell(args[1]) or spellID, "player"
@@ -589,7 +639,9 @@ function Tooltip.Enable()
     end
     if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall then
         local types = Enum.TooltipDataType
-        for _, kind in ipairs({types.Spell, types.Macro, types.PetAction}) do TooltipDataProcessor.AddTooltipPostCall(kind, post) end
+        for _, kind in ipairs({types.Spell, types.Macro, types.PetAction, types.Item}) do
+            TooltipDataProcessor.AddTooltipPostCall(kind, post)
+        end
     else
         -- older clients without the processor
         hooksecurefunc(GameTooltip, "SetSpellByID", function(self, spellID)

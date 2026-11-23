@@ -175,3 +175,49 @@ ns.WeaponData = {
     [9830] = {"mh", false, 80, 200}, -- Shred
     [411128] = {"mh", false, 0, 250}, -- Swipe
 }
+
+-- shaman imbues and rogue poisons: [spell] = {kind, enchant ID on the weapon, ...}. numbers are what the
+-- text should say, the game's own text wins. one that grows with level is {points, per level, from level, up
+-- to level}. chance in percent per hit, lockout in seconds, ap: attack power. Flametongue hits for
+-- perSpeed / 100 x weapon speed + flat. proc: the spell a poison casts, its text has the damage, stacks and
+-- duration for one that ticks, tickCrit when its ticks can crit
+ns.ImbueData = {
+    [8232] = {"windfury", 283, chance = 20, attacks = 2, ap = {46, 7.2, 30, 38}, lockout = 1.5}, -- Windfury Weapon
+    [8235] = {"windfury", 284, chance = 20, attacks = 2, ap = {119, 12.8, 40, 48}, lockout = 1.5}, -- Windfury Weapon
+    [10486] = {"windfury", 525, chance = 20, attacks = 2, ap = {249, 8.3, 50, 58}, lockout = 1.5}, -- Windfury Weapon
+    [16362] = {"windfury", 1669, chance = 20, attacks = 2, ap = {333, 12.5, 60, 68}, lockout = 1.5}, -- Windfury Weapon
+    [461636] = {"windfury", 7569, chance = 20, attacks = 2, ap = {333, 12.5, 60, 68}, lockout = 1.5}, -- Windfury Weapon
+    [8017] = {"rockbiter", 29, ap = {29, 4.1, 1, 6}}, -- Rockbiter Weapon
+    [8018] = {"rockbiter", 6, ap = {58, 3.5, 8, 14}}, -- Rockbiter Weapon
+    [8019] = {"rockbiter", 1, ap = {88, 5, 16, 22}}, -- Rockbiter Weapon
+    [10399] = {"rockbiter", 503, ap = {129, 8.1, 24, 32}}, -- Rockbiter Weapon
+    [16314] = {"rockbiter", 1663, ap = {211, 18, 34, 42}}, -- Rockbiter Weapon
+    [16315] = {"rockbiter", 683, ap = {393, 16.1, 44, 52}}, -- Rockbiter Weapon
+    [16316] = {"rockbiter", 1664, ap = {554, 16.5, 54, 62}}, -- Rockbiter Weapon
+    [461635] = {"rockbiter", 7568, ap = {554, 16.5, 54, 62}}, -- Rockbiter Weapon
+    [2823] = {"proc", 7, chance = 30, proc = 2818, stacks = 5, duration = 12, tickCrit = true}, -- Deadly Poison
+    [2824] = {"proc", 8, chance = 30, proc = 2819, stacks = 5, duration = 12, tickCrit = true}, -- Deadly Poison II
+    [11355] = {"proc", 626, chance = 30, proc = 11353, stacks = 5, duration = 12, tickCrit = true}, -- Deadly Poison III
+    [11356] = {"proc", 627, chance = 30, proc = 11354, stacks = 5, duration = 12, tickCrit = true}, -- Deadly Poison IV
+    [25351] = {"proc", 2630, chance = 30, proc = 25349, stacks = 5, duration = 12, tickCrit = true}, -- Deadly Poison V
+    [8679] = {"proc", 323, chance = 20, proc = 8680}, -- Instant Poison
+    [8686] = {"proc", 324, chance = 20, proc = 8685}, -- Instant Poison II
+    [8688] = {"proc", 325, chance = 20, proc = 8689}, -- Instant Poison III
+    [11338] = {"proc", 623, chance = 20, proc = 11335}, -- Instant Poison IV
+    [11339] = {"proc", 624, chance = 20, proc = 11336}, -- Instant Poison V
+    [11340] = {"proc", 625, chance = 20, proc = 11337}, -- Instant Poison VI
+    [458821] = {"proc", 7542, chance = 30, proc = 458820, stacks = 5, duration = 12, tickCrit = true}, -- Occult Poison I
+    [1214171] = {"proc", 7651, chance = 30, proc = 1214170, stacks = 5, duration = 12, tickCrit = true}, -- Occult Poison II
+    [8033] = {"frostbrand", 2, damage = {32, 2.1, 20, 26}, perMinute = 9}, -- Frostbrand Weapon
+    [8038] = {"frostbrand", 12, damage = {48, 3, 28, 36}, perMinute = 9}, -- Frostbrand Weapon
+    [10456] = {"frostbrand", 524, damage = {77, 5, 38, 46}, perMinute = 9}, -- Frostbrand Weapon
+    [16355] = {"frostbrand", 1667, damage = {127, 4, 48, 56}, perMinute = 9}, -- Frostbrand Weapon
+    [16356] = {"frostbrand", 1668, damage = {158, 5.6, 58, 66}, perMinute = 9}, -- Frostbrand Weapon
+    [461633] = {"frostbrand", 7566, damage = {158, 5.6, 58, 66}, perMinute = 9}, -- Frostbrand Weapon
+    [8024] = {"flametongue", 5, perSpeed = {326, 19, 10, 16}, flat = 0}, -- Flametongue Weapon
+    [8027] = {"flametongue", 4, perSpeed = {479, 29, 18, 24}, flat = 0}, -- Flametongue Weapon
+    [8030] = {"flametongue", 3, perSpeed = {716, 42, 26, 34}, flat = 0}, -- Flametongue Weapon
+    [16339] = {"flametongue", 523, perSpeed = {1144, 73, 36, 44}, flat = 0}, -- Flametongue Weapon
+    [16341] = {"flametongue", 1665, perSpeed = {1876, 62, 46, 54}, flat = 0}, -- Flametongue Weapon
+    [16342] = {"flametongue", 1666, perSpeed = {2498, 78, 56, 64}, flat = 0}, -- Flametongue Weapon
+}

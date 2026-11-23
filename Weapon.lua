@@ -6,7 +6,7 @@ ns.Weapon = Weapon
 
 local Spells, Metrics, Parser = ns.Spells, ns.Metrics, ns.Parser
 local isSecret, number, text = ns.IsSecret, Spells.Number, Spells.Text
-local type, ipairs, wipe, format = type, ipairs, wipe, string.format
+local type, ipairs, pairs, wipe, format = type, ipairs, pairs, wipe, string.format
 
 local SLOTS = {mh = 16, oh = 17, ranged = 18}
 -- the client's own names
@@ -124,7 +124,7 @@ function Weapon.Hands()
     local function hand(key, avg, swing, percent)
         local item = not paws and itemInfo(SLOTS[key])
         hands[key] = {
-            name = handName(key), avg = avg, swing = swing, percent = percent, share = key == "oh" and 0.5 or 1,
+            key = key, name = handName(key), avg = avg, swing = swing, percent = percent, share = key == "oh" and 0.5 or 1,
             speed = item and item.speed or swing, normal = item and item.normal, dagger = item and item.dagger,
             wand = item and item.wand, armed = paws or item ~= nil,
         }
@@ -139,7 +139,8 @@ end
 
 local function emptyHeal() return {direct = 0, periodic = 0, absorb = 0} end
 
--- the bonus as the text words it, cached like the parses: by spell, exact text and what the tables expect
+-- the bonus as the text words it, cached like the parses: by spell, exact text and what the tables expect.
+-- a range's ends come after it
 local bonuses, bonusCount = {}, 0
 
 local function textBonus(spellID, desc, expected, percent)
@@ -148,14 +149,15 @@ local function textBonus(spellID, desc, expected, percent)
     local cached = bonuses[key]
     if cached == nil then
         local pack, fallback = ns.PatternPack()
-        cached = Parser.WeaponBonus(desc, pack or fallback, expected, percent) or false
+        local value, low, high = Parser.WeaponBonus(desc, pack or fallback, expected, percent)
+        cached = value and {value, low, high} or false
         if bonusCount >= 400 then
             wipe(bonuses)
             bonusCount = 0
         end
         bonuses[key], bonusCount = cached, bonusCount + 1
     end
-    return cached or nil
+    if cached then return cached[1], cached[2], cached[3] end
 end
 
 local function levelBonus(entry)
@@ -175,6 +177,195 @@ local function spellPower(entry)
     return entry.sp * (number(GetSpellBonusDamage(SPELL_SCHOOLS[entry.school] or 2)) or 0)
 end
 
+-- Imbues and poisons
+
+-- a number from ImbueData at the player's level: {points, per level, from level, up to level}
+local function atLevel(v)
+    if type(v) ~= "table" then return v end
+    local level = number(UnitLevel("player")) or v[3]
+    if v[4] > 0 then level = math.min(level, v[4]) end
+    return v[1] + v[2] * math.max(0, level - v[3])
+end
+
+local enchantSpells -- [enchant ID] = imbue or poison spell
+
+-- the imbue or poison on a hand now, by the weapon's temporary enchant
+local function appliedSpell(key)
+    if not GetWeaponEnchantInfo then return nil end
+    local info = {GetWeaponEnchantInfo()}
+    local enchant = number(info[key == "mh" and 4 or 8])
+    if not enchant then return nil end
+    if not enchantSpells then
+        enchantSpells = {}
+        for spellID, entry in pairs(ns.ImbueData) do enchantSpells[entry[2]] = spellID end
+    end
+    return enchantSpells[enchant]
+end
+
+-- a poison's hit or tick, from the text of the spell it casts
+local procs, procCount = {}, 0
+
+local function procText(spellID)
+    local desc = Spells.Description(spellID)
+    if not desc then
+        C_Spell.RequestLoadSpellData(spellID)
+        return nil
+    end
+    local key = spellID .. "\0" .. desc
+    local cached = procs[key]
+    if cached == nil then
+        local pack, fallback = ns.PatternPack()
+        cached = Parser.Read(desc, pack or fallback, fallback, true, false) or false
+        if procCount >= 100 then
+            wipe(procs)
+            procCount = 0
+        end
+        procs[key], procCount = cached, procCount + 1
+    end
+    return cached or nil
+end
+
+-- what one proc does with this weapon, and how likely a hit is to proc it. nil when the text isn't there yet
+local function procAmounts(spellID, entry, w)
+    local kind, desc = entry[1], Spells.Description(spellID)
+    if kind == "windfury" then
+        local ap = textBonus(spellID, desc, atLevel(entry.ap)) or atLevel(entry.ap)
+        -- each extra attack is a swing of this weapon with the attack power added
+        local hit = w.avg + ap * w.speed / Metrics.AP_PER_DPS * w.percent * w.share
+        return {chance = entry.chance / 100, lockout = entry.lockout, perProc = entry.attacks * hit, attacks = entry.attacks,
+                hit = hit, melee = true}
+    elseif kind == "flametongue" then
+        local a = atLevel(entry.perSpeed)
+        local low0, high0 = a / 77 - 1 + entry.flat, a / 25 + entry.flat
+        -- the text's range is for weapons of 1.3 and 4.0 sec, in between it grows with the speed
+        local _, low, high = textBonus(spellID, desc, (low0 + high0) / 2)
+        local perHit = low and high > low and low + (high - low) * (w.speed - 1.3) / 2.7 or a / 100 * w.speed + entry.flat
+        return {chance = 1, perProc = perHit, perHit = true, school = "FIRE"}
+    elseif kind == "frostbrand" then
+        local damage = textBonus(spellID, desc, atLevel(entry.damage)) or atLevel(entry.damage)
+        return {chance = entry.perMinute * w.speed / 60, perProc = damage, school = "FROST"}
+    elseif kind == "proc" then
+        local r = procText(entry.proc)
+        if not r then return nil end
+        if r.dmg.direct > 0 then return {chance = entry.chance / 100, perProc = r.dmg.direct, school = r.dmg.school} end
+        if r.dmg.periodic > 0 then
+            return {chance = entry.chance / 100, tick = r.dmg.periodic, interval = r.dmg.duration, stacks = entry.stacks,
+                    duration = entry.duration, school = r.dmg.school, tickCrit = entry.tickCrit}
+        end
+    end
+end
+
+local function noCrit() return 1 end
+
+-- what crits do to a proc on average (wowsims): extra attacks like melee, fire, frost and poison like spells of their
+-- school, a poison's ticks if its spell says they can
+local function procCrit(a, critFor)
+    if a.melee then return critFor("melee") end
+    if a.tick and not a.tickCrit then return 1 end
+    return critFor("spell", a.school)
+end
+
+-- damage a second the procs add on one weapon's swings
+local function addedOn(a, w, critFor)
+    local rate = Metrics.ProcRate(w.swing, a.chance, a.lockout)
+    if a.tick then return Metrics.StackedTicks(rate, a.tick, a.interval, a.stacks, a.duration) * procCrit(a, critFor) end
+    return rate * a.perProc * procCrit(a, critFor)
+end
+
+local function rockbiterAP(spellID, entry)
+    return textBonus(spellID, Spells.Description(spellID), atLevel(entry.ap)) or atLevel(entry.ap)
+end
+
+-- Rockbiter's attack power, every melee swing gets it
+local function attackPowerAdded(ap, all, critFor)
+    local added = 0
+    for _, key in ipairs({"mh", "oh"}) do
+        local w = all[key]
+        if w and w.armed then added = added + ap * w.speed / Metrics.AP_PER_DPS * w.percent * w.share / w.swing end
+    end
+    return added * critFor("melee")
+end
+
+-- auto attack damage a second of a hand, without the Rockbiter on it now: a new imbue would replace it
+local function whiteDPS(w, critFor)
+    local spellID = appliedSpell(w.key)
+    local entry = spellID and ns.ImbueData[spellID]
+    local avg = w.avg
+    if entry and entry[1] == "rockbiter" then
+        avg = avg - rockbiterAP(spellID, entry) * w.speed / Metrics.AP_PER_DPS * w.percent * w.share
+    end
+    return avg / w.swing * critFor("melee")
+end
+
+local IMBUE_SCHOOLS = {flametongue = "FIRE", frostbrand = "FROST"}
+
+-- an imbue or poison as the tooltip shows it: what it adds on each hand it can go on, and the whole hand with it.
+-- shaman imbues go on the main hand, a poison on either. critFor(kind, school): what crits add, 1 when they aren't
+-- counted
+function Weapon.Imbue(spellID, entry, critFor)
+    critFor = critFor or noCrit
+    local all = Weapon.Hands()
+    if not all then return nil end
+    local kind = entry[1]
+    local info = {kind = kind, perHand = kind == "proc", hands = {}, school = IMBUE_SCHOOLS[kind]}
+    if kind == "rockbiter" then
+        local w = all.mh
+        if not (w and w.armed) then return nil end
+        info.ap = rockbiterAP(spellID, entry)
+        local added = attackPowerAdded(info.ap, all, critFor)
+        local white = whiteDPS(w, critFor) + (all.oh and all.oh.armed and whiteDPS(all.oh, critFor) or 0)
+        info.hands[1] = {name = w.name, added = added, total = white + added}
+        return info
+    end
+    for _, key in ipairs(info.perHand and {"mh", "oh"} or {"mh"}) do
+        local w = all[key]
+        if w and w.armed then
+            local a = procAmounts(spellID, entry, w)
+            if not a then return nil end
+            info.amounts, info.school = a, info.school or a.school
+            local added = addedOn(a, w, critFor)
+            -- a poison's total is its hand's, an imbue's both hands' like Attack
+            local white = whiteDPS(w, critFor)
+            if not info.perHand and all.oh and all.oh.armed then white = white + whiteDPS(all.oh, critFor) end
+            info.hands[#info.hands + 1] = {name = w.name, added = added, total = white + added, chance = a.chance, swing = w.swing}
+        end
+    end
+    if #info.hands == 0 then return nil end
+    return info
+end
+
+-- the imbue or poison spell an item puts on a weapon, nil for any other item
+function Weapon.ItemSpell(itemID)
+    local get = C_Item and C_Item.GetItemSpell or GetItemSpell
+    if not itemID or not get then return nil end
+    local _, spellID = get(itemID)
+    spellID = number(spellID)
+    return spellID and ns.ImbueData[spellID] and spellID or nil
+end
+
+-- what the imbues and poisons on the weapons now add, for Attack (a second) and abilities (each use).
+-- Rockbiter's attack power is in the sheet already
+local function appliedOn(weapons, perUse, critFor)
+    critFor = critFor or noCrit
+    local out
+    for _, w in ipairs(weapons) do
+        local spellID = w.key ~= "ranged" and appliedSpell(w.key)
+        local entry = spellID and ns.ImbueData[spellID]
+        local a = entry and entry[1] ~= "rockbiter" and procAmounts(spellID, entry, w)
+        local amount
+        if a and perUse and not a.tick then
+            amount = a.chance * a.perProc * procCrit(a, critFor)
+        elseif a and not perUse then
+            amount = addedOn(a, w, critFor)
+        end
+        if amount and amount > 0 then
+            out = out or {}
+            out[#out + 1] = {name = Spells.Name(spellID) or tostring(spellID), amount = amount}
+        end
+    end
+    return out
+end
+
 -- the weapons a strike uses. a hand needs a weapon in it, a fist can only Attack
 local function strikeWeapons(all, hand)
     local out = {}
@@ -190,7 +381,7 @@ end
 
 -- a result like the parser's, from the weapons. nil when a weapon it needs isn't there or can't be read.
 -- parsed: the text's own result, for the area words
-function Weapon.Strike(spellID, entry, desc, parsed)
+function Weapon.Strike(spellID, entry, desc, parsed, critFor)
     local all = Weapon.Hands()
     if not all then return nil end
     local _, class = UnitClass("player")
@@ -206,6 +397,7 @@ function Weapon.Strike(spellID, entry, desc, parsed)
     if entry.extra then
         strike.extra = {entry.extra[1], entry.extra[2], entry.extra[1] == "flametongue" and (Spells.Name(8024) or "Flametongue Weapon")}
     end
+    strike.applied = appliedOn(weapons, true, critFor)
     local dmg = {direct = total, periodic = 0, perHit = 0, school = entry.school or "PHYSICAL", strike = strike, fromWeapon = true}
     -- the swing would hit anyway: its time is the swing's, and the cost buys only the bonus
     if entry.swing then
@@ -221,7 +413,7 @@ function Weapon.Strike(spellID, entry, desc, parsed)
 end
 
 -- Attack swings each weapon at its own speed, Auto Shot and Shoot fire the ranged one
-function Weapon.Auto(spellID)
+function Weapon.Auto(spellID, critFor)
     local kind = AUTO[spellID]
     local all = kind and Weapon.Hands()
     if not all then return nil end
@@ -239,7 +431,7 @@ function Weapon.Auto(spellID)
     return {
         -- a wand's school is the wand's, the sheet doesn't say
         dmg = {direct = 0, periodic = 0, perHit = out[1].hit, hands = out, school = not wand and "PHYSICAL" or nil,
-               fromWeapon = not wand},
+               fromWeapon = not wand, applied = kind == "melee" and appliedOn(list, false, critFor) or nil},
         heal = emptyHeal(),
         area = false,
         -- wand shots crit like spells
@@ -263,6 +455,10 @@ function Weapon.Describe(out)
     out[#out + 1] = "  UnitRangedDamage = " .. list(UnitRangedDamage("player"))
     out[#out + 1] = "  UnitAttackPower = " .. list(UnitAttackPower("player"))
     out[#out + 1] = "  UnitRangedAttackPower = " .. list(UnitRangedAttackPower("player"))
+    if GetWeaponEnchantInfo then
+        out[#out + 1] = "  GetWeaponEnchantInfo = " .. list(GetWeaponEnchantInfo())
+        out[#out + 1] = format("  imbues = mh:%s oh:%s", tostring(appliedSpell("mh")), tostring(appliedSpell("oh")))
+    end
     for _, key in ipairs({"mh", "oh", "ranged"}) do
         local slot = SLOTS[key]
         local id = GetInventoryItemID("player", slot)

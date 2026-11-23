@@ -178,6 +178,9 @@ local function strikeLines(out, strike, direct, L, fmt)
         out[#out + 1] = format(L["Weapon damage plus %s"], bonus)
     end
     if strike.extra then extraLine(out, strike.extra, direct, L, fmt) end
+    for _, applied in ipairs(strike.applied or {}) do
+        out[#out + 1] = format(L["With %s: +%s per use"], applied.name, Format.Amount(applied.amount, fmt))
+    end
 end
 
 -- returns whether the side has anything at all, shown or not
@@ -210,6 +213,9 @@ local function breakdownSide(out, m, L, fmt, kind, show)
         for _, hand in ipairs(m.hands) do
             out[#out + 1] = format(L["%s: %s per hit, every %s sec"], hand.name, Format.Amount(hand.hit, fmt),
                                    Format.Number(hand.every, 2, fmt))
+        end
+        for _, applied in ipairs(m.applied or {}) do
+            out[#out + 1] = format(L["With %s: Added DPS %s"], applied.name, Format.Number(applied.amount, 1, fmt))
         end
     elseif amounts and m.perHit > 0 and m.attackEvery then
         out[#out + 1] = format(L["Per hit: %s, one attack every %s sec"], Format.Amount(m.perHit, fmt),
@@ -248,6 +254,60 @@ function Format.Breakdown(m, L, fmt, schoolName, costTexts, out, show)
             out[#out + 1] = L["Includes your bonuses, as the game shows them"]
         end
     end
+    return out
+end
+
+-- Imbues and poisons
+
+-- info comes from Weapon.Imbue: what it adds a second on each hand, and the hand's whole DPS with it. a poison
+-- can go on either hand, so it gets a line for each
+function Format.ImbueLines(info, o, L, fmt, out)
+    out = out or {}
+    if not o.rate.dmg then return out end
+    for _, hand in ipairs(info.hands) do
+        local added, total = Format.Number(hand.added, o.decimals, fmt), Format.Number(hand.total, o.decimals, fmt)
+        if info.perHand then
+            out[#out + 1] = o.swingTotal and format(L["%s: Added DPS %s, Total DPS %s"], hand.name, added, total)
+                            or format(L["%s: Added DPS %s"], hand.name, added)
+            out[#out + 1] = "dmg"
+        else
+            out[#out + 1] = format("%s: %s", L["Added DPS"], added)
+            out[#out + 1] = "dmg"
+            if o.swingTotal then
+                out[#out + 1] = format("%s: %s", L["Total DPS"], total)
+                out[#out + 1] = "dmg"
+            end
+        end
+    end
+    return out
+end
+
+-- how often it procs and what a proc does
+function Format.ImbueDetails(info, L, fmt, out, show)
+    out = out or {}
+    show = show or EVERYTHING
+    local a = info.amounts
+    if show.amounts then
+        for _, hand in ipairs(info.hands) do
+            if hand.chance then
+                out[#out + 1] = format(L["%s: %s%% of hits, a swing every %s sec"], hand.name, Format.Number(hand.chance * 100, 1, fmt),
+                                       Format.Number(hand.swing, 2, fmt))
+            end
+        end
+        if info.ap then
+            out[#out + 1] = format(L["Attack power: +%s"], Format.Amount(info.ap, fmt))
+        elseif a and a.attacks then
+            out[#out + 1] = format(L["%s extra attacks of %s each"], Format.Amount(a.attacks, fmt), Format.Amount(a.hit, fmt))
+        elseif a and a.perHit then
+            out[#out + 1] = format(L["Per hit: %s"], Format.Amount(a.perProc, fmt))
+        elseif a and a.tick then
+            out[#out + 1] = format(L["Per proc: %s every %s sec, up to %s stacks"], Format.Amount(a.tick, fmt),
+                                   Format.Amount(a.interval, fmt), Format.Amount(a.stacks or 1, fmt))
+        elseif a then
+            out[#out + 1] = format(L["Per proc: %s"], Format.Amount(a.perProc, fmt))
+        end
+    end
+    if show.notes then out[#out + 1] = L["From your auto attacks, abilities can add more"] end
     return out
 end
 
