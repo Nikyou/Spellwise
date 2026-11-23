@@ -17,7 +17,7 @@ ns.Patterns.zhCN = {
         "每次主手命中", "近战攻击所造成的伤害提高",
     },
     comboRow = "{n}点:",
-    extraPerPoint = {"怒气点数转化为{v}点额外伤害"},
+    extraPerPoint = {"怒气点数转化为{v}点额外伤害", "能量点数转化为{v}点额外伤害"},
     -- "小队成员" alone is often one party member
     area = {
         "附近", "所有敌人", "进入该区域", "目标区域中", "在目标区域", "向目标区域", "指定区域", "指定位置", "锥形",
@@ -50,7 +50,8 @@ ns.Patterns.zhCN = {
         {"dmg", "over", "{v}点{s}伤害,持续{d}", when = "harmful"},
         {"heal", "over", {"{d}内{w}{v}点生命值", "{d}的时间内{w}{v}点生命值", "{d}内{w}{n}码内{w}{v}点生命值"}},
         {"heal", "direct", "治疗{v}点伤害"},
-        {"dmg", "direct", {"{v}点{s}伤害", "伤害上限为{v}点"}},
+        -- Ferocious Bite's rows: "245-321 伤害", no 点
+        {"dmg", "direct", {"{v}点{s}伤害", "伤害上限为{v}点", "{v} 伤害"}},
         {"heal", "direct", {"恢复{v}点生命值", "回复{v}点生命值"}},
     },
 }
