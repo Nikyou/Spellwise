@@ -1,3 +1,6 @@
+#### 1.4.1
+* With Rockbiter on your weapon, Windfury's DPS and the Total DPS of other imbues no longer count Rockbiter's attack power. The new imbue would replace it.
+
 #### 1.4
 * Weapon abilities like Mortal Strike, Sinister Strike, Shred and Aimed Shot now show their lines, worked out from your weapon damage and attack power.
 * Heroic Strike, Cleave, Maul and Raptor Strike show "Added DPS": what they add to your swing when used on every one. "Total DPS" of the whole swing is an option in the Lines tab.
