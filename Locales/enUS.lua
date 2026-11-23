@@ -128,6 +128,16 @@ L["With %s on the off hand: %s"] = true
 L["Heals party members for %s in total"] = true
 L["Added DPS"] = true
 L["Total DPS"] = true
+L["%s: Added DPS %s"] = true
+L["%s: Added DPS %s, Total DPS %s"] = true
+L["%s: %s%% of hits, a swing every %s sec"] = true
+L["%s extra attacks of %s each"] = true
+L["Per proc: %s"] = true
+L["Per proc: %s every %s sec, up to %s stacks"] = true
+L["Attack power: +%s"] = true
+L["From your auto attacks, abilities can add more"] = true
+L["With %s: Added DPS %s"] = true
+L["With %s: +%s per use"] = true
 L["%s: %s%% of base"] = true
 L["Free"] = true
 
@@ -191,8 +201,8 @@ L["Average with your crit chance and talents, against a target of your level. Th
 L["Weapons"] = true
 L["Weapon abilities"] = true
 L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = true
-L["Total DPS on next swing abilities"] = true
-L["%s, %s and others replace your next swing. Added DPS is what they add to it, Total DPS the whole swing."] = true
+L["Total DPS on next swing abilities, imbues and poisons"] = true
+L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] = true
 L["Auto attacks"] = true
 L["%s, %s and %s with a wand: damage per second of your weapons."] = true
 

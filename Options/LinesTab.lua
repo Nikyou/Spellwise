@@ -105,10 +105,10 @@ local function create(parent)
                                name(12294) or "Mortal Strike", name(1752) or "Sinister Strike", name(19434) or "Aimed Shot"),
                         1, 1, 1, true)
     end)
-    controls.swingTotal = right.check(L["Total DPS on next swing abilities"], setter("lines", "swingTotal"), 24)
+    controls.swingTotal = right.check(L["Total DPS on next swing abilities, imbues and poisons"], setter("lines", "swingTotal"), 24)
     W.AddTooltip(controls.swingTotal, function(tooltip)
-        tooltip:AddLine(L["Total DPS on next swing abilities"])
-        tooltip:AddLine(format(L["%s, %s and others replace your next swing. Added DPS is what they add to it, Total DPS the whole swing."],
+        tooltip:AddLine(L["Total DPS on next swing abilities, imbues and poisons"])
+        tooltip:AddLine(format(L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."],
                                name(78) or "Heroic Strike", name(6807) or "Maul"), 1, 1, 1, true)
     end)
     controls.autoAttack = right.check(L["Auto attacks"], setter("lines", "autoAttack"))
