@@ -147,7 +147,7 @@ ns.WeaponData = {
     [11294] = {"mh", true, 68, 100}, -- Sinister Strike
     -- shaman
     [408507] = {"oh", false, 0, 100, school = "FIRE", extra = {"flametongue", 100}}, -- Lava Lash
-    [17364] = {"mh", true, 0, 150}, -- Stormstrike
+    [17364] = {"mh", true, 0, 100}, -- Stormstrike
     -- druid
     [1082] = {"mh", false, 27, 140}, -- Claw
     [3029] = {"mh", false, 39, 140}, -- Claw

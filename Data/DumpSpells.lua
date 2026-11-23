@@ -143,6 +143,7 @@ ns.DumpSpells = {
         5502,                                    -- Sense Undead
         19896,                                   -- Shadow Resistance Aura
         440658,                                  -- Shield of Righteousness
+        1310994,                                 -- Swift Judgement
         1311015,                                 -- Templar's Bulwark
         10326,                                   -- Turn Undead
         1310897,                                 -- Voice of Truth
@@ -396,7 +397,7 @@ ns.DumpSpells = {
         408510,                                  -- Water Shield
         546,                                     -- Water Walking
         10614,                                   -- Windfury Totem
-        8232, 8235, 16362,                       -- Windfury Weapon
+        16362,                                   -- Windfury Weapon
         15112,                                   -- Windwall Totem
     },
 
@@ -565,6 +566,7 @@ ns.DumpSpells = {
         9907,                                    -- Faerie Fire
         1238122,                                 -- Feral Charge
         16979,                                   -- Feral Charge (Bear)
+        1328618, 22568, 22827, 22828, 22829, 31018, -- Ferocious Bite
         22842,                                   -- Frenzied Regeneration
         21850,                                   -- Gift of the Wild
         6795,                                    -- Growl
