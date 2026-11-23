@@ -142,6 +142,7 @@ local function header(out, sections)
     for school = 1, 7 do crits[#crits + 1] = "spell" .. school .. ":" .. value(GetSpellCritChance(school)) end
     out[#out + 1] = "  player crit = " .. concat(crits, " ")
     out[#out + 1] = "  crit talents = " .. critTalents()
+    ns.Weapon.Describe(out)
     if sections then out[#out + 1] = "  sections = " .. concat(sections, " ") end
 end
 

@@ -76,7 +76,7 @@ local function lineOptions(forPet, free)
     local lines, pets, o = profile.lines, profile.pets, lineOptionsBuf
     o.rate.dmg = lines.dps and (not forPet or pets.dps)
     o.rate.heal = lines.hps and (not forPet or pets.hps)
-    o.dot, o.dotLong, o.perCast = lines.dot, lines.dotLong, lines.perCast
+    o.dot, o.dotLong, o.perCast, o.swingTotal = lines.dot, lines.dotLong, lines.perCast, lines.swingTotal
     o.decimals = profile.look.decimals
     wipe(o.costs)
     for _, powerType in ipairs(Resources.ORDER) do
@@ -135,8 +135,8 @@ local function withCrit(spellID, result, unit)
     local school = first.dmg.school
     local crit = {}
     for _, side in ipairs({"dmg", "heal"}) do
-        -- a drain is a spell even when its text names no school
-        local kind = Spells.CritKind(spellID, school, side == "heal" or result.drain)
+        -- a drain is a spell even when its text names no school. Holy Strike crits like a strike
+        local kind = result.critKind or Spells.CritKind(spellID, school, side == "heal" or result.drain)
         local chance, multiplier
         if unit == "pet" then
             chance, multiplier = Spells.PetCrit(kind, side == "dmg" and school or nil)
@@ -180,6 +180,16 @@ function Tooltip.Build(spellID, unit, out, petLines)
     elseif not secret then
         requestText(spellID)
     end
+    -- the text only says "weapon damage", the numbers come from the weapons
+    local lines = db().profile.lines
+    if unit == "player" and not (rule and rule.avg) then
+        local strike = ns.WeaponData[spellID]
+        if strike and lines.weapon then
+            result = ns.Weapon.Strike(spellID, strike, desc, result)
+        elseif ns.Weapon.AUTO[spellID] and lines.autoAttack then
+            result = ns.Weapon.Auto(spellID)
+        end
+    end
     if rule and rule.avg then result = ns.Rules.Pinned(result, rule.avg) end
 
     wipe(spellCosts)
@@ -190,8 +200,9 @@ function Tooltip.Build(spellID, unit, out, petLines)
     local crit
     if result and not result.weapon then
         Spells.Timings(spellID, timings)
+        timings.swing = result.swing
         -- a pet's crit is its owner's, only hunters and warlocks have one
-        if db().profile.lines.crit and (unit == "player" or Spells.PetCrit("spell") ~= false) then
+        if lines.crit and (unit == "player" or Spells.PetCrit("spell") ~= false) then
             result, crit = withCrit(spellID, result, unit)
         end
     else
@@ -229,7 +240,7 @@ end
 local function percent(value, fmt) return Format.Number(value * 100, 1, fmt) end
 
 -- melee and ranged crit drops against higher targets, spells keep theirs
-local function levelLines(out, c, rate, fmt)
+local function levelLines(out, c, rate, label, fmt)
     if c.kind == "spell" then return add(out, L["Spell crit doesn't depend on target level"], "info") end
     if not rate then return end
     local decimals = db().profile.look.decimals
@@ -237,7 +248,7 @@ local function levelLines(out, c, rate, fmt)
         local chance = Metrics.CritAgainst(c.kind, c.chance, levels)
         local value = rate / c.factor * Metrics.CritFactor(chance, c.multiplier)
         local line = levels == 3 and L["Target level +%d (boss): crit %s%%, %s"] or L["Target level +%d: crit %s%%, %s"]
-        add(out, format(line, levels, percent(chance, fmt), format("%s: %s", L["DPS"], Format.Number(value, decimals, fmt))), "info")
+        add(out, format(line, levels, percent(chance, fmt), format("%s: %s", label, Format.Number(value, decimals, fmt))), "info")
     end
 end
 
@@ -254,7 +265,11 @@ local function critLines(out, m, crit, fmt, show)
                                    or L["Crit %s%% ×%s: +%s%% on average"]
                     add(out, format(text, percent(c.chance, fmt), Format.Number(c.multiplier, 2, fmt), percent(c.factor - 1, fmt)), "info")
                 end
-                if side == "dmg" and show.levels then levelLines(out, c, part.perSec or part.periodicPerSec, fmt) end
+                if side == "dmg" and show.levels then
+                    -- Heroic Strike's main line is what it adds, so are these
+                    local rate = part.addedPerSec or part.perSec or part.periodicPerSec
+                    levelLines(out, c, rate, part.addedPerSec and L["Added DPS"] or L["DPS"], fmt)
+                end
             end
         end
     end

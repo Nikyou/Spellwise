@@ -74,6 +74,11 @@ local function sideLines(out, m, kind, o, L, fmt)
     elseif m.charges and m.direct > 0 then
         -- charges go off when the caster gets hit, there's no time to divide by
         add(join(format(L["Per cast: %s"], Format.Amount(m.direct, fmt)), costParts(m, "direct", o, L, fmt, kind)))
+    elseif m.direct > 0 and m.addedPerSec then
+        -- Heroic Strike: what it adds to the swing it replaces, the whole swing if asked for
+        local added = showRate and format("%s: %s", L["Added DPS"], Format.Number(m.addedPerSec, o.decimals, fmt))
+        add(join(added, costParts(m, "direct", o, L, fmt, kind)))
+        if showRate and o.swingTotal then add(format("%s: %s", L["Total DPS"], Format.Number(m.perSec, o.decimals, fmt))) end
     elseif m.direct > 0 then
         add(join(rate(m.perSec), costParts(m, "direct", o, L, fmt, kind)))
         if o.perCast and not showPeriodic then add(format(L["Per cast: %s"], Format.Amount(m.direct, fmt))) end
@@ -119,6 +124,7 @@ local function reasonText(L, reason)
     if reason == "channel" then return L["channel time"] end
     if reason == "gcd" then return L["global cooldown"] end
     if reason == "cooldown" then return L["cooldown"] end
+    if reason == "swing" then return L["swing time"] end
     return L["cast time"]
 end
 
@@ -127,6 +133,51 @@ local function divisor(out, L, m, fmt)
     if m.cooldownLeftOut then
         out[#out + 1] = format(L["Cooldown of %s sec not counted"], Format.Amount(m.cooldownLeftOut, fmt))
     end
+end
+
+-- what the text says beside the strike, from the damage as shown (crit in when it's on)
+local function extraLine(out, extra, direct, L, fmt)
+    local kind, percent = extra[1], extra[2]
+    local more = Format.Amount(direct * (1 + percent / 100), fmt)
+    local text
+    if kind == "poisoned" then
+        text = format(L["Against a poisoned target: %s"], more)
+    elseif kind == "giants" then
+        text = format(L["Against Giants, Dragonkin and mounted targets: %s"], more)
+    elseif kind == "mainTarget" then
+        text = format(L["Main target: %s"], more)
+    elseif kind == "flametongue" then
+        text = format(L["With %s on the off hand: %s"], extra[3], more)
+    elseif kind == "heals" then
+        text = format(L["Heals party members for %s in total"], Format.Amount(direct * percent / 100, fmt))
+    end
+    out[#out + 1] = text
+end
+
+-- how a weapon ability's damage comes together: each weapon's hit, then the ability's percent and bonus
+local function strikeLines(out, strike, direct, L, fmt)
+    if strike.swing then
+        out[#out + 1] = format(L["Replaces a %s main hand swing, plus %s"], Format.Amount(strike.parts[1].hit, fmt),
+                               Format.Amount(strike.bonus, fmt))
+        return
+    end
+    for _, part in ipairs(strike.parts) do
+        if part.normal then
+            out[#out + 1] = format(L["%s: %s weapon damage, normalized to %s sec"], part.name, Format.Amount(part.hit, fmt),
+                                   Format.Number(part.normal, 1, fmt))
+        else
+            out[#out + 1] = format(L["%s: %s weapon damage"], part.name, Format.Amount(part.hit, fmt))
+        end
+    end
+    local percent, bonus = Format.Amount(strike.percent, fmt), Format.Amount(strike.bonus, fmt)
+    if strike.percent ~= 100 and strike.bonus > 0 then
+        out[#out + 1] = format(L["%s%% of weapon damage plus %s"], percent, bonus)
+    elseif strike.percent ~= 100 then
+        out[#out + 1] = format(L["%s%% of weapon damage"], percent)
+    elseif strike.bonus > 0 then
+        out[#out + 1] = format(L["Weapon damage plus %s"], bonus)
+    end
+    if strike.extra then extraLine(out, strike.extra, direct, L, fmt) end
 end
 
 -- returns whether the side has anything at all, shown or not
@@ -145,6 +196,7 @@ local function breakdownSide(out, m, L, fmt, kind, show)
         elseif amounts then
             out[#out + 1] = format(heal and L["Healing: %s"] or L["Damage: %s"], Format.Amount(m.direct, fmt))
         end
+        if amounts and m.strike then strikeLines(out, m.strike, m.direct, L, fmt) end
         if show.time then divisor(out, L, m, fmt) end
     end
     if amounts and m.totem then
@@ -154,7 +206,12 @@ local function breakdownSide(out, m, L, fmt, kind, show)
         out[#out + 1] = format(heal and L["Healing over time: %s over %s sec"] or L["Damage over time: %s over %s sec"],
                                Format.Amount(m.periodic, fmt), Format.Amount(m.periodicTime or 0, fmt))
     end
-    if amounts and m.perHit > 0 and m.attackEvery then
+    if amounts and m.hands then
+        for _, hand in ipairs(m.hands) do
+            out[#out + 1] = format(L["%s: %s per hit, every %s sec"], hand.name, Format.Amount(hand.hit, fmt),
+                                   Format.Number(hand.every, 2, fmt))
+        end
+    elseif amounts and m.perHit > 0 and m.attackEvery then
         out[#out + 1] = format(L["Per hit: %s, one attack every %s sec"], Format.Amount(m.perHit, fmt),
                                Format.Number(m.attackEvery, 3, fmt))
     elseif amounts and m.perHit > 0 then
@@ -182,7 +239,14 @@ function Format.Breakdown(m, L, fmt, schoolName, costTexts, out, show)
     if show.notes then
         if m.area then out[#out + 1] = L["Values are per target"] end
         if m.pinned then out[#out + 1] = L["Average damage set by a spell rule"] end
-        out[#out + 1] = L["Includes your bonuses, as the game shows them"]
+        if m.dmg.strike and m.dmg.strike.swing then
+            out[#out + 1] = L["Replaces your next swing: values if used on every swing"]
+        end
+        if m.dmg.fromWeapon then
+            out[#out + 1] = L["From your weapon damage and attack power, before armor"]
+        else
+            out[#out + 1] = L["Includes your bonuses, as the game shows them"]
+        end
     end
     return out
 end

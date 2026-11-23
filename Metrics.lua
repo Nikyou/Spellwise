@@ -4,7 +4,7 @@ local _, ns = ...
 local Metrics = {}
 ns.Metrics = Metrics
 
-local pairs = pairs
+local pairs, ipairs = pairs, ipairs
 
 Metrics.GCD = 1.5
 
@@ -26,7 +26,7 @@ local function costValues(side, costs)
     local out = {}
     for powerType, cost in pairs(costs or {}) do
         out[powerType] = {
-            direct = perCost(side.direct, cost),
+            direct = perCost(side.added or side.direct, cost),
             periodic = perCost(side.periodic, cost),
             total = perCost(side.total, cost),
             absorb = perCost(side.absorb, cost),
@@ -53,7 +53,12 @@ local function side(src, t, costs)
         m.direct, m.channel, base = m.periodic, true, m.periodicTime or 0
         m.periodic, m.periodicTime = 0, nil
     end
-    if m.direct > 0 and not m.charges then
+    if m.direct > 0 and not m.charges and t.swing then
+        -- Heroic Strike: once per swing at most, off the GCD
+        m.time, m.reason, m.added = t.swing, "swing", src.added
+        m.perSec = m.direct / m.time
+        m.addedPerSec = (m.added or 0) / m.time
+    elseif m.direct > 0 and not m.charges then
         m.time, m.reason = Metrics.DirectTime(base, m.channel, t)
         m.perSec = m.direct / m.time
         if (t.cooldown or 0) > m.time then m.cooldownLeftOut = t.cooldown end
@@ -68,6 +73,12 @@ local function side(src, t, costs)
         m.perSec = m.perHit / t.attack
         if src.lasts then m.attackTotal = m.perSec * src.lasts end
     end
+    -- auto attacks: each weapon swings at its own speed
+    if src.hands then
+        m.hands, m.perSec, m.attackEvery = src.hands, 0, src.hands[1].every
+        for _, hand in ipairs(src.hands) do m.perSec = m.perSec + hand.hit / hand.every end
+    end
+    m.strike, m.fromWeapon = src.strike, src.fromWeapon
     m.perCost = costValues(m, costs)
     return m
 end
@@ -114,6 +125,11 @@ local function scaled(side, factor, isHeal)
     out.periodic = (side.periodic or 0) * factor
     if side.perHit then out.perHit = side.perHit * factor end
     if side.perCharge then out.perCharge = side.perCharge * factor end
+    if side.added then out.added = side.added * factor end
+    if side.hands then
+        out.hands = {}
+        for i, hand in ipairs(side.hands) do out.hands[i] = {name = hand.name, hit = hand.hit * factor, every = hand.every} end
+    end
     -- absorbs never crit
     if isHeal then out.absorb = side.absorb end
     return out
@@ -131,4 +147,29 @@ function Metrics.WithCrit(parsed, dmgFactor, healFactor)
         for points, row in ipairs(parsed.combo) do out.combo[points] = Metrics.WithCrit(row, dmgFactor, healFactor) end
     end
     return out
+end
+
+-- Weapons
+
+-- attack power per point of weapon damage per second
+Metrics.AP_PER_DPS = 14
+
+-- one weapon's average hit for an ability. w: avg (the character sheet's hit, attack power and bonuses in), speed
+-- (the weapon's own), normal (the speed a normalized ability counts instead), percent (the sheet's damage percent),
+-- share (the off hand hits for half)
+function Metrics.WeaponHit(w, ap, normalized)
+    if not normalized or not w.normal or not w.speed then return w.avg end
+    return w.avg - (w.share or 1) * (w.percent or 1) * ap * (w.speed - w.normal) / Metrics.AP_PER_DPS
+end
+
+-- an ability that hits with one weapon or each of them: the percent of the weapon's hit, plus the bonus. the bonus
+-- is as the text words it, the percent already in, and gets the sheet's damage percent like the rest
+function Metrics.WeaponStrike(weapons, ap, normalized, percent, bonus)
+    local total, parts = 0, {}
+    for i, w in ipairs(weapons) do
+        local hit = Metrics.WeaponHit(w, ap, normalized)
+        total = total + hit * percent / 100 + bonus * (w.percent or 1)
+        parts[i] = {name = w.name, hit = hit, normal = normalized and w.speed and w.normal or nil}
+    end
+    return total, {parts = parts, percent = percent, bonus = bonus}
 end

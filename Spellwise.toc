@@ -25,6 +25,7 @@ Locales.xml
 Resources.lua
 Data\DumpSpells.lua
 Data\CritData.lua
+Data\WeaponData.lua
 Patterns\enUS.lua
 Patterns\ruRU.lua
 Patterns\deDE.lua
@@ -44,6 +45,7 @@ PowerMax.lua
 
 Core.lua
 Spells.lua
+Weapon.lua
 Rules.lua
 Tooltip.lua
 Dump.lua

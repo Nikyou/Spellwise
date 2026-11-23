@@ -354,6 +354,22 @@ function Parser.Read(text, pack, fallback, harmful, helpful)
     return r
 end
 
+-- a weapon ability's bonus as its text has it ("weapon damage plus 160"): the number closest to what the tables
+-- expect, a quarter off at most. the client can word it lower than the tables (Mutilate: 36, not 40). the percent
+-- never counts, ruRU's Claw has it without the % sign. nil if none
+function Parser.WeaponBonus(text, pack, expected, percent)
+    if not pack or type(text) ~= "string" or not expected or expected <= 0 then return nil end
+    text = Parser.Normalize(text, pack)
+    local best, bestGap
+    for raw, after in text:gmatch("([%d%.]+~?[%d%.]*)( ?%%?)") do
+        local value = not after:find("%", 1, true) and valueOf(raw)
+        if value == percent then value = nil end
+        local gap = value and math.abs(value - expected)
+        if gap and gap <= expected / 4 and (not bestGap or gap < bestGap) then best, bestGap = value, gap end
+    end
+    return best
+end
+
 -- the row for a number of combo points, or the closest one below it
 function Parser.ComboRow(r, points)
     for n = points, 1, -1 do if r.combo[n] then return r.combo[n], n end end
