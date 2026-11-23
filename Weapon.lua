@@ -203,12 +203,17 @@ local function appliedSpell(key)
 end
 
 -- a poison's hit or tick, from the text of the spell it casts
-local procs, procCount = {}, 0
+local procs, procCount, requested = {}, 0, {}
 
 local function procText(spellID)
-    local desc = Spells.Description(spellID)
+    local desc, secret = Spells.Description(spellID)
     if not desc then
-        C_Spell.RequestLoadSpellData(spellID)
+        -- a bar redraws every 0.2 sec, ask again after a while, and never for a text that's only secret in combat
+        local now = GetTime()
+        if not secret and (not requested[spellID] or now - requested[spellID] > 10) then
+            requested[spellID] = now
+            C_Spell.RequestLoadSpellData(spellID)
+        end
         return nil
     end
     local key = spellID .. "\0" .. desc
