@@ -22,7 +22,7 @@ embeds.xml
 
 Locales.xml
 
-Resources.lua
+Engine\Resources.lua
 Data\DumpSpells.lua
 Data\CritData.lua
 Data\WeaponData.lua
@@ -37,11 +37,11 @@ Patterns\ptBR.lua
 Patterns\zhCN.lua
 Patterns\zhTW.lua
 
-Parser.lua
-Metrics.lua
-Format.lua
-NormalCost.lua
-PowerMax.lua
+Engine\Parser.lua
+Engine\Metrics.lua
+Engine\Format.lua
+Engine\NormalCost.lua
+Engine\PowerMax.lua
 
 Core.lua
 Spells.lua

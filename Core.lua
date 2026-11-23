@@ -29,7 +29,7 @@ local defaults = {
             amounts = true, time = true, school = true, costs = true, notes = true,
             crit = true, levels = true, combo = true, extra = true,
         },
-        -- per power type. a type that's off in Resources.lua shows nothing, whatever is saved here
+        -- per power type. a type that's off in Engine/Resources.lua shows nothing, whatever is saved here
         resources = {
             ["*"] = {dmg = false, heal = false, costLine = false},
             [0] = {dmg = true, heal = true, costLine = true},
@@ -56,7 +56,7 @@ local defaults = {
         rules = {}, -- [spellID] = {hide = true} or {avg = number}
     },
     char = {
-        power = {}, -- learned max power, see PowerMax.lua
+        power = {}, -- learned max power, see Engine/PowerMax.lua
     },
     global = {
         notices = {}, -- locales that got the "no patterns" notice
