@@ -2,7 +2,10 @@
 * Weapon abilities like Mortal Strike, Sinister Strike, Shred and Aimed Shot now show their lines, worked out from your weapon damage and attack power.
 * Heroic Strike, Cleave, Maul and Raptor Strike show "Added DPS": what they add to your swing when used on every one. "Total DPS" of the whole swing is an option in the Lines tab.
 * Attack, Auto Shot and wand Shoot show the DPS of your weapons. The details list each hand.
+* Windfury, Flametongue, Frostbrand and Rockbiter Weapon show the DPS they add to your main hand.
+* Poisons show on their item what they add to each hand. Attack and weapon abilities list the poisons and imbues on your weapons.
 * Both can be turned off in the Lines tab.
+* "Include crit" counts crits for imbues and poisons too, and leaves out ticks that can't crit, like Lifebloom's or Vampiric Touch's.
 
 #### 1.3.1
 * Pet abilities now show their lines on the pet bar and in the pet spellbook.

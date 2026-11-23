@@ -37,13 +37,14 @@ The numbers come from the tooltip, so your gear bonuses are included.
 * Execute and Ferocious Bite: the details show what extra rage or energy deals.
 * Weapon abilities (Mortal Strike, Backstab, Aimed Shot and more) use your weapon damage and attack power. Attack, Auto Shot and wand Shoot show your weapons' DPS.
 * Heroic Strike, Cleave, Maul and Raptor Strike: "Added DPS" and per rage on what they add to your swing, "Total DPS" if you want it.
+* Shaman weapon imbues and rogue poisons: the DPS they add. Poisons show it on the item, for each hand.
 * Spell rules: hide a spell's lines or set its average damage. Use the Spell rules tab or `/sp hide`, `/sp pin` and `/sp show`.
 * Colours, school tint, font, size, outline, decimals and thousands separator, with a live preview.
 * Profiles with export and import.
 
 ## Notes
 
-* Weapon imbues, seals and poisons are skipped.
+* Imbues and poisons count your auto attacks only, abilities can proc them too. Seals are skipped.
 * Weapon damage is counted before the target's armor. Weapon abilities need a weapon in the hand they use.
 * A finisher's DPS doesn't count the time spent building combo points.
 * Hit chance and resistances aren't counted. Pets use your crit.
