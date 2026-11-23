@@ -95,6 +95,29 @@ local function create(parent)
     controls.other = right.check(L["Other tooltips (chat links, addons)"], setter("show", "other"))
     right.help(L["Pets have their own tab."], 0)
 
+    -- spell names from the game, so they read in the player's language
+    local name = ns.Spells.Name
+    right.title(L["Weapons"])
+    controls.weapon = right.check(L["Weapon abilities"], setter("lines", "weapon"))
+    W.AddTooltip(controls.weapon, function(tooltip)
+        tooltip:AddLine(L["Weapon abilities"])
+        tooltip:AddLine(format(L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."],
+                               name(12294) or "Mortal Strike", name(1752) or "Sinister Strike", name(19434) or "Aimed Shot"),
+                        1, 1, 1, true)
+    end)
+    controls.swingTotal = right.check(L["Total DPS on next swing abilities"], setter("lines", "swingTotal"), 24)
+    W.AddTooltip(controls.swingTotal, function(tooltip)
+        tooltip:AddLine(L["Total DPS on next swing abilities"])
+        tooltip:AddLine(format(L["%s, %s and others replace your next swing. Added DPS is what they add to it, Total DPS the whole swing."],
+                               name(78) or "Heroic Strike", name(6807) or "Maul"), 1, 1, 1, true)
+    end)
+    controls.autoAttack = right.check(L["Auto attacks"], setter("lines", "autoAttack"))
+    W.AddTooltip(controls.autoAttack, function(tooltip)
+        tooltip:AddLine(L["Auto attacks"])
+        tooltip:AddLine(format(L["%s, %s and %s with a wand: damage per second of your weapons."], name(6603) or "Attack",
+                               name(75) or "Auto Shot", name(5019) or "Shoot"), 1, 1, 1, true)
+    end)
+
     right.title(L["Minimap"])
     controls.minimap = right.check(L["Show minimap button"], function(checked) ns.addon:SetMinimapButtonShown(checked) end)
 
@@ -116,6 +139,9 @@ local function refresh()
     controls.actionBar:SetChecked(p.show.actionBar)
     controls.spellbook:SetChecked(p.show.spellbook)
     controls.other:SetChecked(p.show.other)
+    controls.weapon:SetChecked(p.lines.weapon)
+    controls.swingTotal:SetChecked(p.lines.swingTotal)
+    controls.autoAttack:SetChecked(p.lines.autoAttack)
     controls.minimap:SetChecked(not p.minimap.hide)
 end
 

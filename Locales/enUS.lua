@@ -111,6 +111,23 @@ L["Cost: %s"] = true
 L["Values are per target"] = true
 L["Average damage set by a spell rule"] = true
 L["Includes your bonuses, as the game shows them"] = true
+L["%s: %s weapon damage"] = true
+L["%s: %s weapon damage, normalized to %s sec"] = true
+L["%s%% of weapon damage plus %s"] = true
+L["%s%% of weapon damage"] = true
+L["Weapon damage plus %s"] = true
+L["%s: %s per hit, every %s sec"] = true
+L["From your weapon damage and attack power, before armor"] = true
+L["Replaces a %s main hand swing, plus %s"] = true
+L["swing time"] = true
+L["Replaces your next swing: values if used on every swing"] = true
+L["Against a poisoned target: %s"] = true
+L["Against Giants, Dragonkin and mounted targets: %s"] = true
+L["Main target: %s"] = true
+L["With %s on the off hand: %s"] = true
+L["Heals party members for %s in total"] = true
+L["Added DPS"] = true
+L["Total DPS"] = true
 L["%s: %s%% of base"] = true
 L["Free"] = true
 
@@ -171,6 +188,13 @@ L["Cost"] = true
 L["Per resource"] = true
 L["Include crit"] = true
 L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = true
+L["Weapons"] = true
+L["Weapon abilities"] = true
+L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = true
+L["Total DPS on next swing abilities"] = true
+L["%s, %s and others replace your next swing. Added DPS is what they add to it, Total DPS the whole swing."] = true
+L["Auto attacks"] = true
+L["%s, %s and %s with a wand: damage per second of your weapons."] = true
 
 -- Options/DetailsTab.lua
 L["Never"] = true

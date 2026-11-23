@@ -20,6 +20,9 @@ local defaults = {
             details = "SHIFT", -- NONE, ALWAYS, SHIFT, CTRL or ALT
             useCooldown = false,
             crit = false, -- expected damage with crits, against a target of your level
+            weapon = true, -- abilities that hit with a weapon, worked out from the character sheet
+            swingTotal = false, -- Heroic Strike and Maul: the whole swing's DPS too, not only what they add
+            autoAttack = true, -- Attack, Auto Shot and wand Shoot
         },
         -- what the details show
         detailLines = {
