@@ -291,16 +291,27 @@ local function attackPowerAdded(ap, all, critFor)
     return added * critFor("melee")
 end
 
--- auto attack damage a second of a hand, without the Rockbiter on it now: a new imbue would replace it
-local function whiteDPS(w, critFor)
-    local spellID = appliedSpell(w.key)
+-- the weapons as they'd be once something new goes on this hand: a Rockbiter there now goes away, and its attack
+-- power is in every melee hit on the sheet (Windfury's extra attacks too)
+local function replacing(all, key)
+    local spellID = appliedSpell(key)
     local entry = spellID and ns.ImbueData[spellID]
-    local avg = w.avg
-    if entry and entry[1] == "rockbiter" then
-        avg = avg - rockbiterAP(spellID, entry) * w.speed / Metrics.AP_PER_DPS * w.percent * w.share
+    if not (entry and entry[1] == "rockbiter") then return all end
+    local ap = rockbiterAP(spellID, entry)
+    local out = {ap = all.ap - ap, rap = all.rap}
+    for _, hand in ipairs({"mh", "oh", "ranged"}) do
+        local w = all[hand]
+        if w then
+            local copy = {}
+            for field, value in pairs(w) do copy[field] = value end
+            if hand ~= "ranged" then copy.avg = w.avg - ap * w.speed / Metrics.AP_PER_DPS * w.percent * w.share end
+            out[hand] = copy
+        end
     end
-    return avg / w.swing * critFor("melee")
+    return out
 end
+
+local function whiteDPS(w, critFor) return w.avg / w.swing * critFor("melee") end
 
 local IMBUE_SCHOOLS = {flametongue = "FIRE", frostbrand = "FROST"}
 
@@ -314,16 +325,18 @@ function Weapon.Imbue(spellID, entry, critFor)
     local kind = entry[1]
     local info = {kind = kind, perHand = kind == "proc", hands = {}, school = IMBUE_SCHOOLS[kind]}
     if kind == "rockbiter" then
-        local w = all.mh
+        local weapons = replacing(all, "mh")
+        local w = weapons.mh
         if not (w and w.armed) then return nil end
         info.ap = rockbiterAP(spellID, entry)
-        local added = attackPowerAdded(info.ap, all, critFor)
-        local white = whiteDPS(w, critFor) + (all.oh and all.oh.armed and whiteDPS(all.oh, critFor) or 0)
+        local added = attackPowerAdded(info.ap, weapons, critFor)
+        local white = whiteDPS(w, critFor) + (weapons.oh and weapons.oh.armed and whiteDPS(weapons.oh, critFor) or 0)
         info.hands[1] = {name = w.name, added = added, total = white + added}
         return info
     end
     for _, key in ipairs(info.perHand and {"mh", "oh"} or {"mh"}) do
-        local w = all[key]
+        local weapons = replacing(all, key)
+        local w = weapons[key]
         if w and w.armed then
             local a = procAmounts(spellID, entry, w)
             if not a then return nil end
@@ -331,7 +344,7 @@ function Weapon.Imbue(spellID, entry, critFor)
             local added = addedOn(a, w, critFor)
             -- a poison's total is its hand's, an imbue's both hands' like Attack
             local white = whiteDPS(w, critFor)
-            if not info.perHand and all.oh and all.oh.armed then white = white + whiteDPS(all.oh, critFor) end
+            if not info.perHand and weapons.oh and weapons.oh.armed then white = white + whiteDPS(weapons.oh, critFor) end
             info.hands[#info.hands + 1] = {name = w.name, added = added, total = white + added, chance = a.chance, swing = w.swing}
         end
     end
