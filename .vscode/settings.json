@@ -1,0 +1,60 @@
+{
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.runtime.builtin": {
+        "basic": "disable",
+        "debug": "disable",
+        "io": "disable",
+        "math": "disable",
+        "os": "disable",
+        "package": "disable",
+        "string": "disable",
+        "table": "disable",
+        "utf8": "disable"
+    },
+    "Lua.workspace.library": [
+        "~\\.vscode\\extensions\\ketho.wow-api-0.22.3\\Annotations\\Core"
+    ],
+    "Lua.workspace.ignoreDir": [
+        "Libs",
+        "Dev"
+    ],
+    "Lua.diagnostics.globals": [
+        "LARGE_NUMBER_SEPERATOR",
+        "DECIMAL_SEPERATOR",
+        "SPELL_CAST_CHANNELED",
+        "STANDARD_TEXT_FONT",
+        "STRING_SCHOOL_PHYSICAL",
+        "STRING_SCHOOL_HOLY",
+        "STRING_SCHOOL_FIRE",
+        "STRING_SCHOOL_NATURE",
+        "STRING_SCHOOL_FROST",
+        "STRING_SCHOOL_SHADOW",
+        "STRING_SCHOOL_ARCANE",
+        "MANA",
+        "RAGE",
+        "ENERGY",
+        "FOCUS",
+        "COMBO_POINTS",
+        "MANA_COST",
+        "RAGE_COST",
+        "ENERGY_COST",
+        "FOCUS_COST",
+        "COMBO_POINTS_COST",
+        "issecretvalue",
+        "C_Secrets",
+        "TooltipDataProcessor",
+        "GameTooltipText",
+        "ItemRefTooltip",
+        "UISpecialFrames",
+        "SOUNDKIT",
+        "ColorPickerFrame",
+        "ScrollingEdit_OnCursorChanged",
+        "ScrollingEdit_OnUpdate",
+        "CreateMinimalSliderFormatter",
+        "MinimalSliderWithSteppersMixin",
+        "ButtonFrameTemplate_HidePortrait",
+        "PanelTemplates_SetNumTabs",
+        "PanelTemplates_TabResize",
+        "PanelTemplates_SetTab"
+    ]
+}
