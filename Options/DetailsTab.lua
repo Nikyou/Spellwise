@@ -26,9 +26,7 @@ local function create(parent)
     local left = Options.Column(parent, 0, COLUMN)
     left.title(L["Details"])
     left.label(L["Show details"])
-    controls.details = W.Dropdown(parent, 260, detailItems, function(value)
-        profile().lines.details = value
-    end)
+    controls.details = W.Dropdown(parent, 260, detailItems, function(value) profile().lines.details = value end)
     left.place(controls.details, 32)
 
     left.title(L["In the details"])
@@ -38,8 +36,8 @@ local function create(parent)
     part(left, "costs", L["Costs"])
     part(left, "combo", L["Each number of combo points"])
     -- spell names from the game, so they read in the player's language
-    part(left, "extra", format(L["More rage or energy (%s, %s)"],
-                               ns.Spells.Name(5308) or "Execute", ns.Spells.Name(22568) or "Ferocious Bite"))
+    part(left, "extra",
+         format(L["More rage or energy (%s, %s)"], ns.Spells.Name(5308) or "Execute", ns.Spells.Name(22568) or "Ferocious Bite"))
     part(left, "notes", L["Notes: per target, spell rules, bonuses"])
 
     local right = Options.Column(parent, RIGHT, COLUMN)

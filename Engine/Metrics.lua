@@ -17,9 +17,7 @@ function Metrics.DirectTime(base, channeled, t)
     return time, reason
 end
 
-local function perCost(amount, cost)
-    if amount and amount > 0 and cost and cost > 0 then return amount / cost end
-end
+local function perCost(amount, cost) if amount and amount > 0 and cost and cost > 0 then return amount / cost end end
 
 -- every power type, shown or not, so turning one on later is just a setting
 local function costValues(side, costs)
@@ -102,9 +100,7 @@ function Metrics.HasHealing(m) return m.heal.direct > 0 or m.heal.periodic > 0 o
 -- talents raise the bonus, not the multiplier: +100% turns 1.5x into 2x
 Metrics.CRIT_BONUS = {spell = 0.5, melee = 1, ranged = 1}
 
-function Metrics.CritMultiplier(kind, bonusPercent)
-    return 1 + Metrics.CRIT_BONUS[kind] * (1 + (bonusPercent or 0) / 100)
-end
+function Metrics.CritMultiplier(kind, bonusPercent) return 1 + Metrics.CRIT_BONUS[kind] * (1 + (bonusPercent or 0) / 100) end
 
 -- expected damage per hit relative to a hit that doesn't crit
 function Metrics.CritFactor(chance, multiplier)
@@ -145,7 +141,9 @@ function Metrics.WithCrit(parsed, dmgFactor, healFactor, noTicks)
     if parsed.extraPerPoint then out.extraPerPoint = parsed.extraPerPoint * dmgFactor end
     if parsed.combo then
         out.combo = {}
-        for points, row in ipairs(parsed.combo) do out.combo[points] = Metrics.WithCrit(row, dmgFactor, healFactor, noTicks) end
+        for points, row in ipairs(parsed.combo) do
+            out.combo[points] = Metrics.WithCrit(row, dmgFactor, healFactor, noTicks)
+        end
     end
     return out
 end

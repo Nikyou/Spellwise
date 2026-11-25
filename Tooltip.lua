@@ -21,7 +21,13 @@ local SCHOOL_COLORS = {
 }
 -- written out so check_locale sees the keys
 local LABELS = {
-    DPM = L["DPM"], HPM = L["HPM"], DPR = L["DPR"], HPR = L["HPR"], DPE = L["DPE"], HPE = L["HPE"], DPF = L["DPF"],
+    DPM = L["DPM"],
+    HPM = L["HPM"],
+    DPR = L["DPR"],
+    HPR = L["HPR"],
+    DPE = L["DPE"],
+    HPE = L["HPE"],
+    DPF = L["DPF"],
     HPF = L["HPF"],
 }
 
@@ -53,7 +59,9 @@ local function noticeMissingPack()
     local notices = db().global.notices
     if ns.Patterns[locale] or notices[locale] then return end
     notices[locale] = true
-    ns.Print(format(L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."], locale))
+    ns.Print(format(
+               L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."],
+               locale))
 end
 
 -- the game redraws the tooltip once the text loads. never rebuild it from here: Attack has no text, so that
@@ -154,8 +162,12 @@ local function withCrit(spellID, result, unit)
         else
             chance, multiplier = Spells.Crit(spellID, kind, side == "dmg" and school or nil)
         end
-        crit[side] = {kind = kind, chance = chance, multiplier = multiplier,
-                      factor = chance and Metrics.CritFactor(chance, multiplier) or 1}
+        crit[side] = {
+            kind = kind,
+            chance = chance,
+            multiplier = multiplier,
+            factor = chance and Metrics.CritFactor(chance, multiplier) or 1,
+        }
     end
     crit.noTicks = noTickCrit(spellID)
     return Metrics.WithCrit(result, crit.dmg.factor, crit.heal.factor, crit.noTicks), crit
@@ -289,7 +301,9 @@ local function critLines(out, m, crit, fmt, show)
                 if show.crit then
                     local text = side == "heal" and L["Heal crit %s%% ×%s: +%s%% on average"]
                                    or L["Crit %s%% ×%s: +%s%% on average"]
-                    add(out, format(text, percent(c.chance, fmt), Format.Number(c.multiplier, 2, fmt), percent(c.factor - 1, fmt)), "info")
+                    add(out,
+                        format(text, percent(c.chance, fmt), Format.Number(c.multiplier, 2, fmt), percent(c.factor - 1, fmt)),
+                        "info")
                 end
                 if side == "dmg" and show.levels then
                     -- Heroic Strike's main line is what it adds, so are these
@@ -352,7 +366,9 @@ function Tooltip.ImbueLines(info, costs, free, basePercents, unit, details, out)
     costLines(out, costs, free, basePercents, unit, fmt)
     if info and details and #out > 0 then
         local before = #out
-        for _, text in ipairs(Format.ImbueDetails(info, L, fmt, wipe(breakdownBuf), profile.detailLines)) do add(out, text, "info") end
+        for _, text in ipairs(Format.ImbueDetails(info, L, fmt, wipe(breakdownBuf), profile.detailLines)) do
+            add(out, text, "info")
+        end
         if details == "hint" and #out > before then
             for i = #out, before + 1, -1 do out[i] = nil end
             add(out, format(L["Hold %s for details"], Tooltip.ModifierName(profile.lines.details)), "info")
@@ -399,13 +415,17 @@ end
 -- made-up spells for the preview
 local SAMPLES = {
     {
-        result = {dmg = {direct = 1240, periodic = 160, duration = 8, perHit = 0, school = "FIRE"},
-                  heal = {direct = 0, periodic = 0, absorb = 0}},
+        result = {
+            dmg = {direct = 1240, periodic = 160, duration = 8, perHit = 0, school = "FIRE"},
+            heal = {direct = 0, periodic = 0, absorb = 0},
+        },
         timings = {cast = 3.5, cooldown = 0, gcd = 1.5},
         costs = {[0] = 410},
-    },
-    {
-        result = {dmg = {direct = 0, periodic = 0, perHit = 0}, heal = {direct = 1180, periodic = 1064, duration = 21, absorb = 0}},
+    }, {
+        result = {
+            dmg = {direct = 0, periodic = 0, perHit = 0},
+            heal = {direct = 1180, periodic = 1064, duration = 21, absorb = 0},
+        },
         timings = {cast = 2, cooldown = 0, gcd = 1.5},
         costs = {[0] = 880},
     },
@@ -539,7 +559,9 @@ end
 local function spellBookSpell(slot, bank)
     if type(slot) ~= "number" or isSecret(slot) or not (C_SpellBook and C_SpellBook.GetSpellBookItemInfo) then return nil end
     local ok, info = pcall(C_SpellBook.GetSpellBookItemInfo, slot, bank)
-    if ok and type(info) == "table" and not isSecret(info) then return Spells.Number(info.spellID) or Spells.Number(info.actionID) end
+    if ok and type(info) == "table" and not isSecret(info) then
+        return Spells.Number(info.spellID) or Spells.Number(info.actionID)
+    end
 end
 
 local function isPetBank(bank) return not isSecret(bank) and (bank == BANK_PET or bank == "pet") end
@@ -549,12 +571,14 @@ local function source(tooltip, data)
     local info = tooltip.GetProcessingTooltipInfo and tooltip:GetProcessingTooltipInfo()
     if isSecret(info) then info = nil end
     local getter = type(info) == "table" and Spells.Text(info.getterName)
-    local args = type(info) == "table" and not isSecret(info.getterArgs) and type(info.getterArgs) == "table" and info.getterArgs or {}
+    local args = type(info) == "table" and not isSecret(info.getterArgs) and type(info.getterArgs) == "table" and info.getterArgs
+                   or {}
     local profile = db().profile
     local dataType = type(data) == "table" and Spells.Number(data.type)
     -- a poison: the lines go on the item, in the bags or on a bar
     if dataType and dataType == Enum.TooltipDataType.Item then
-        local shown = profile.lines.weapon and (getter == "GetAction" and profile.show.actionBar or getter ~= "GetAction" and profile.show.other)
+        local shown = profile.lines.weapon
+                        and (getter == "GetAction" and profile.show.actionBar or getter ~= "GetAction" and profile.show.other)
         return shown, ns.Weapon.ItemSpell(Spells.Number(data.id)), "player"
     end
     local spellID = dataType == Enum.TooltipDataType.Spell and Spells.Number(data.id) or nil
@@ -621,7 +645,8 @@ function Tooltip.HoveredSpellID()
         local ok, _, id = pcall(GameTooltip.GetSpell, GameTooltip)
         if ok and Spells.Number(id) then return id, "the tooltip's spell, no lines of ours (" .. shownData() .. ")" end
     end
-    return lastSpellID, format("the last spell with our lines, the tooltip %s (%s)", shown and "has none" or "is closed", shownData())
+    return lastSpellID,
+           format("the last spell with our lines, the tooltip %s (%s)", shown and "has none" or "is closed", shownData())
 end
 
 function Tooltip.Enable()
@@ -635,7 +660,9 @@ function Tooltip.Enable()
         hooksecurefunc(GameTooltip, "SetPetAction", function(self, slot) ns.Guard(onPetAction, self, slot) end)
     end
     if GameTooltip.SetSpellBookItem then
-        hooksecurefunc(GameTooltip, "SetSpellBookItem", function(self, slot, bank) ns.Guard(onSpellBookItem, self, slot, bank) end)
+        hooksecurefunc(GameTooltip, "SetSpellBookItem", function(self, slot, bank)
+            ns.Guard(onSpellBookItem, self, slot, bank)
+        end)
     end
     if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall then
         local types = Enum.TooltipDataType

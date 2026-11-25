@@ -47,7 +47,8 @@ L["DPE"] = "Dano/energia"
 L["HPE"] = "Cura/energia"
 L["DPF"] = "Dano/conc."
 L["HPF"] = "Cura/conc."
-L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] = "Ainda não há valores de dano ou cura para o idioma do seu jogo (%s), só custos. Para ajudar, envie ao autor /sp dump all."
+L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] =
+  "Ainda não há valores de dano ou cura para o idioma do seu jogo (%s), só custos. Para ajudar, envie ao autor /sp dump all."
 L["Free now, normally %s"] = "Grátis agora, normalmente %s"
 L["Free now"] = "Grátis agora"
 L["Hold %s for details"] = "Segure %s para ver detalhes"
@@ -192,17 +193,21 @@ L["Pets have their own tab."] = "Os ajudantes têm uma aba própria."
 L["Minimap"] = "Minimapa"
 L["Show minimap button"] = "Mostrar botão no minimapa"
 L["About the values"] = "Sobre os valores"
-L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] = "As dicas já incluem seus bônus, o Spellwise usa os valores como aparecem. Sem chance de acerto. Feitiços em área: por alvo."
+L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] =
+  "As dicas já incluem seus bônus, o Spellwise usa os valores como aparecem. Sem chance de acerto. Feitiços em área: por alvo."
 L["Divide by the cooldown when it's longer than the cast."] = "Divide pela recarga quando ela é maior que o lançamento."
 L["Cost"] = "Custo"
 L["Per resource"] = "Por recurso"
 L["Include crit"] = "Incluir crítico"
-L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = "Média com sua chance de crítico e seus talentos, contra um alvo do seu nível. Os detalhes mostram níveis maiores."
+L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] =
+  "Média com sua chance de crítico e seus talentos, contra um alvo do seu nível. Os detalhes mostram níveis maiores."
 L["Weapons"] = "Armas"
 L["Weapon abilities"] = "Habilidades com arma"
-L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = "%s, %s, %s e outras habilidades que golpeiam com uma arma: com base no dano da arma e no poder de ataque."
+L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] =
+  "%s, %s, %s e outras habilidades que golpeiam com uma arma: com base no dano da arma e no poder de ataque."
 L["Total DPS on next swing abilities, imbues and poisons"] = "DPS total em habilidades do próximo golpe, imbuições e venenos"
-L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] = "%s, %s, imbuições e venenos somam aos seus golpes. O DPS adicionado é o que somam; o DPS total, o da arma com eles."
+L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] =
+  "%s, %s, imbuições e venenos somam aos seus golpes. O DPS adicionado é o que somam; o DPS total, o da arma com eles."
 L["Auto attacks"] = "Ataques automáticos"
 L["%s, %s and %s with a wand: damage per second of your weapons."] = "%s, %s e %s com varinha: dano por segundo das suas armas."
 
@@ -256,20 +261,23 @@ L["Pets: show on"] = "Ajudantes: mostrar em"
 L["Finishers"] = "Golpes de finalização"
 L["Lines on finishers"] = "Linhas nos golpes de finalização"
 L["Combo points for the lines"] = "Pontos de combo para as linhas"
-L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] = "%s, %s e outros golpes de finalização: as linhas usam esses pontos de combo, os detalhes mostram todos. O DPS não conta o tempo para acumulá-los."
+L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] =
+  "%s, %s e outros golpes de finalização: as linhas usam esses pontos de combo, os detalhes mostram todos. O DPS não conta o tempo para acumulá-los."
 L["Pets and finishers"] = "Ajudantes e finalizações"
 
 -- Options/RulesTab.lua
 L["Hide the lines"] = "Ocultar as linhas"
 L["Set the average damage"] = "Definir o dano médio"
-L["No such spell. Names only work for spells you know."] = "Feitiço não encontrado. Nomes só funcionam para feitiços que você conhece."
+L["No such spell. Names only work for spells you know."] =
+  "Feitiço não encontrado. Nomes só funcionam para feitiços que você conhece."
 L["Enter a number above 0."] = "Digite um número maior que 0."
 L["Saved: %s"] = "Salvo: %s"
 L["Editing %s. Change it and press Save."] = "Editando %s. Faça as alterações e clique em Salvar."
 L["Remove"] = "Remover"
 L["Edit"] = "Editar"
 L["Add or change a rule"] = "Adicionar ou alterar uma regra"
-L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] = "Oculte as linhas de um feitiço ou fixe seu dano médio. Também /sp hide, /sp pin, /sp show."
+L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] =
+  "Oculte as linhas de um feitiço ou fixe seu dano médio. Também /sp hide, /sp pin, /sp show."
 L["Spell name or ID"] = "Nome ou ID do feitiço"
 L["Rule"] = "Regra"
 L["Average damage"] = "Dano médio"
@@ -295,7 +303,8 @@ L["Reset"] = "Redefinir"
 L["Reset current profile"] = "Redefinir o perfil atual"
 L["Reset this profile, spell rules included?"] = "Redefinir este perfil, incluindo as regras de feitiços?"
 L["Share"] = "Compartilhar"
-L["Share this profile as a string. Imports ask before replacing anything."] = "Compartilhe este perfil como código. A importação pergunta antes de substituir algo."
+L["Share this profile as a string. Imports ask before replacing anything."] =
+  "Compartilhe este perfil como código. A importação pergunta antes de substituir algo."
 L["Profiles"] = "Perfis"
 
 -- Spells.lua

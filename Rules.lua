@@ -7,9 +7,7 @@ ns.Rules = Rules
 
 local function rules() return ns.addon.db.profile.rules end
 
-local function changed()
-    if ns.Options then ns.Options:RefreshActiveTab() end
-end
+local function changed() if ns.Options then ns.Options:RefreshActiveTab() end end
 
 function Rules.Get(spellID) return rules()[spellID] end
 
@@ -78,8 +76,13 @@ function Rules.Pinned(parsed, average)
     local dmg = parsed and parsed.dmg
     local ticks = dmg and dmg.direct == 0 and dmg.periodic > 0
     return {
-        dmg = {direct = ticks and 0 or average, periodic = ticks and average or 0, duration = ticks and dmg.duration or nil,
-               perHit = 0, school = dmg and dmg.school},
+        dmg = {
+            direct = ticks and 0 or average,
+            periodic = ticks and average or 0,
+            duration = ticks and dmg.duration or nil,
+            perHit = 0,
+            school = dmg and dmg.school,
+        },
         heal = parsed and parsed.heal or {direct = 0, periodic = 0, absorb = 0},
         area = parsed and parsed.area or false,
         pinned = true,

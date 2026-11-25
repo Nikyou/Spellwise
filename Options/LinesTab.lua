@@ -19,18 +19,19 @@ local DESCRIPTIONS = {
     DPF = L["DPF: damage per focus"],
     HPF = L["HPF: healing per focus"],
 }
-local COST_LINES = {
-    MANA = L["Mana cost"],
-    RAGE = L["Rage cost"],
-    ENERGY = L["Energy cost"],
-    FOCUS = L["Focus cost"],
-}
+local COST_LINES = {MANA = L["Mana cost"], RAGE = L["Rage cost"], ENERGY = L["Energy cost"], FOCUS = L["Focus cost"]}
 local COST_MODES = {
     {value = "percent", text = L["Percent of your maximum"]}, {value = "amount", text = L["Amount"]},
     {value = "both", text = L["Amount and percent"]},
 }
 local LABELS = {
-    DPM = L["DPM"], HPM = L["HPM"], DPR = L["DPR"], HPR = L["HPR"], DPE = L["DPE"], HPE = L["HPE"], DPF = L["DPF"],
+    DPM = L["DPM"],
+    HPM = L["HPM"],
+    DPR = L["DPR"],
+    HPR = L["HPR"],
+    DPE = L["DPE"],
+    HPE = L["HPE"],
+    DPF = L["DPF"],
     HPF = L["HPF"],
 }
 
@@ -52,9 +53,7 @@ local function resourceRow(parent, column, powerType)
         {key = "costLine", text = L["Cost"], tip = COST_LINES[resource.token], x = 320},
     }
     for _, cell in ipairs(cells) do
-        local box = W.CheckBox(row, cell.text, function(checked)
-            profile().resources[powerType][cell.key] = checked
-        end)
+        local box = W.CheckBox(row, cell.text, function(checked) profile().resources[powerType][cell.key] = checked end)
         box:SetPoint("LEFT", cell.x, 0)
         W.AddTooltip(box, function(tooltip) tooltip:AddLine(cell.tip, 1, 1, 1, true) end)
         resourceBoxes[#resourceBoxes + 1] = {box = box, powerType = powerType, key = cell.key}
@@ -73,7 +72,9 @@ local function create(parent)
     controls.crit = left.check(L["Include crit"], setter("lines", "crit"))
     W.AddTooltip(controls.crit, function(tooltip)
         tooltip:AddLine(L["Include crit"])
-        tooltip:AddLine(L["Average with your crit chance and talents, against a target of your level. The details show higher levels."], 1, 1, 1, true)
+        tooltip:AddLine(
+          L["Average with your crit chance and talents, against a target of your level. The details show higher levels."], 1, 1,
+          1, true)
     end)
     left.help(L["Divide by the cooldown when it's longer than the cast."])
 
@@ -83,9 +84,7 @@ local function create(parent)
         if resource.enabled and resource.labels then resourceRow(parent, left, powerType) end
     end
     left.label(L["Show the cost as"])
-    controls.costMode = W.Dropdown(parent, 260, function() return COST_MODES end, function(value)
-        profile().costMode = value
-    end)
+    controls.costMode = W.Dropdown(parent, 260, function() return COST_MODES end, function(value) profile().costMode = value end)
     left.place(controls.costMode, 32)
 
     local right = Options.Column(parent, RIGHT, COLUMN)
@@ -101,15 +100,18 @@ local function create(parent)
     controls.weapon = right.check(L["Weapon abilities"], setter("lines", "weapon"))
     W.AddTooltip(controls.weapon, function(tooltip)
         tooltip:AddLine(L["Weapon abilities"])
-        tooltip:AddLine(format(L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."],
-                               name(12294) or "Mortal Strike", name(1752) or "Sinister Strike", name(19434) or "Aimed Shot"),
-                        1, 1, 1, true)
+        tooltip:AddLine(format(
+                          L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."],
+                          name(12294) or "Mortal Strike", name(1752) or "Sinister Strike", name(19434) or "Aimed Shot"), 1, 1, 1,
+                        true)
     end)
-    controls.swingTotal = right.check(L["Total DPS on next swing abilities, imbues and poisons"], setter("lines", "swingTotal"), 24)
+    controls.swingTotal = right.check(L["Total DPS on next swing abilities, imbues and poisons"], setter("lines", "swingTotal"),
+                                      24)
     W.AddTooltip(controls.swingTotal, function(tooltip)
         tooltip:AddLine(L["Total DPS on next swing abilities, imbues and poisons"])
-        tooltip:AddLine(format(L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."],
-                               name(78) or "Heroic Strike", name(6807) or "Maul"), 1, 1, 1, true)
+        tooltip:AddLine(format(
+                          L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."],
+                          name(78) or "Heroic Strike", name(6807) or "Maul"), 1, 1, 1, true)
     end)
     controls.autoAttack = right.check(L["Auto attacks"], setter("lines", "autoAttack"))
     W.AddTooltip(controls.autoAttack, function(tooltip)
@@ -122,7 +124,8 @@ local function create(parent)
     controls.minimap = right.check(L["Show minimap button"], function(checked) ns.addon:SetMinimapButtonShown(checked) end)
 
     right.title(L["About the values"])
-    right.help(L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."], 0)
+    right.help(L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."],
+               0)
 end
 
 local function refresh()

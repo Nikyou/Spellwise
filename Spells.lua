@@ -24,9 +24,7 @@ function Spells.Name(spellID)
     return type(info) == "table" and text(info.name) or nil
 end
 
-function Spells.Flags(spellID)
-    return flag(C_Spell.IsSpellHarmful(spellID)), flag(C_Spell.IsSpellHelpful(spellID))
-end
+function Spells.Flags(spellID) return flag(C_Spell.IsSpellHarmful(spellID)), flag(C_Spell.IsSpellHelpful(spellID)) end
 
 -- the client's own "Channeled" line, works in any language
 function Spells.IsChanneled(spellID)
@@ -142,8 +140,10 @@ function Spells.ScanTalents()
         for _, node in ipairs(C_Traits.GetTreeNodes(tree) or {}) do
             local nodeInfo = C_Traits.GetNodeInfo(config, node)
             local rank = type(nodeInfo) == "table" and number(nodeInfo.currentRank)
-            local entry = rank and rank > 0 and nodeInfo.activeEntry and C_Traits.GetEntryInfo(config, nodeInfo.activeEntry.entryID)
-            local definition = type(entry) == "table" and number(entry.definitionID) and C_Traits.GetDefinitionInfo(entry.definitionID)
+            local entry = rank and rank > 0 and nodeInfo.activeEntry
+                            and C_Traits.GetEntryInfo(config, nodeInfo.activeEntry.entryID)
+            local definition = type(entry) == "table" and number(entry.definitionID)
+                                 and C_Traits.GetDefinitionInfo(entry.definitionID)
             local spellID = type(definition) == "table" and number(definition.spellID)
             if spellID then talentRanks[spellID] = rank end
         end

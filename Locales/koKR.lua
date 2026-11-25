@@ -47,7 +47,8 @@ L["DPE"] = "피해/기력"
 L["HPE"] = "치유/기력"
 L["DPF"] = "피해/집중"
 L["HPF"] = "치유/집중"
-L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] = "게임 언어(%s)의 피해와 치유 수치는 아직 없어 비용만 표시합니다. 도와주시려면 /sp dump all 결과를 제작자에게 보내 주세요."
+L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] =
+  "게임 언어(%s)의 피해와 치유 수치는 아직 없어 비용만 표시합니다. 도와주시려면 /sp dump all 결과를 제작자에게 보내 주세요."
 L["Free now, normally %s"] = "지금 무료, 평소 %s"
 L["Free now"] = "지금 무료"
 L["Hold %s for details"] = "%s를 누르면 상세 정보"
@@ -66,7 +67,8 @@ L["Spellwise dump"] = "Spellwise 데이터"
 L["Loading %d spell(s), the text updates."] = "주문 %d개를 불러오는 중, 내용이 갱신됩니다."
 L["Copy with Ctrl+A, Ctrl+C and send it to the author."] = "Ctrl+A, Ctrl+C로 복사해서 제작자에게 보내 주세요."
 L["Close"] = "닫기"
-L["Hover a spell or name one: /sp dump <spell>"] = "주문에 마우스를 올리거나 이름을 지정하세요: /sp dump <주문>"
+L["Hover a spell or name one: /sp dump <spell>"] =
+  "주문에 마우스를 올리거나 이름을 지정하세요: /sp dump <주문>"
 L["\"%s\" is no spell or class. Classes: %s"] = "\"%s\": 주문도 직업도 아닙니다. 직업: %s"
 
 -- ImportExport.lua
@@ -120,7 +122,8 @@ L["%s: %s per hit, every %s sec"] = "%s: 타격당 %s, %s초마다"
 L["From your weapon damage and attack power, before armor"] = "무기 피해와 전투력 기준, 방어도 적용 전"
 L["Replaces a %s main hand swing, plus %s"] = "주장비 공격(%s)을 대체, + %s"
 L["swing time"] = "공격 속도"
-L["Replaces your next swing: values if used on every swing"] = "다음 공격을 대체합니다: 매 공격마다 사용할 때의 수치"
+L["Replaces your next swing: values if used on every swing"] =
+  "다음 공격을 대체합니다: 매 공격마다 사용할 때의 수치"
 L["Against a poisoned target: %s"] = "중독된 대상: %s"
 L["Against Giants, Dragonkin and mounted targets: %s"] = "거인, 용족, 탈것을 탄 대상: %s"
 L["Main target: %s"] = "주 대상: %s"
@@ -192,17 +195,22 @@ L["Pets have their own tab."] = "소환수는 별도 탭에서 설정합니다."
 L["Minimap"] = "미니맵"
 L["Show minimap button"] = "미니맵 버튼 표시"
 L["About the values"] = "수치 안내"
-L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] = "툴팁에는 이미 보너스가 포함되어 있어 Spellwise는 표시된 값을 그대로 씁니다. 적중률은 반영하지 않습니다. 광역 주문은 대상 하나당 수치입니다."
-L["Divide by the cooldown when it's longer than the cast."] = "재사용 대기시간이 시전보다 길면 그 시간으로 나눕니다."
+L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] =
+  "툴팁에는 이미 보너스가 포함되어 있어 Spellwise는 표시된 값을 그대로 씁니다. 적중률은 반영하지 않습니다. 광역 주문은 대상 하나당 수치입니다."
+L["Divide by the cooldown when it's longer than the cast."] =
+  "재사용 대기시간이 시전보다 길면 그 시간으로 나눕니다."
 L["Cost"] = "비용"
 L["Per resource"] = "자원별"
 L["Include crit"] = "치명타 포함"
-L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = "치명타율과 특성을 반영한 평균값으로, 같은 레벨 대상 기준입니다. 상세 정보에는 더 높은 레벨도 표시됩니다."
+L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] =
+  "치명타율과 특성을 반영한 평균값으로, 같은 레벨 대상 기준입니다. 상세 정보에는 더 높은 레벨도 표시됩니다."
 L["Weapons"] = "무기"
 L["Weapon abilities"] = "무기 기술"
-L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = "%s, %s, %s 등 무기로 공격하는 기술: 무기 피해와 전투력으로 계산합니다."
+L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] =
+  "%s, %s, %s 등 무기로 공격하는 기술: 무기 피해와 전투력으로 계산합니다."
 L["Total DPS on next swing abilities, imbues and poisons"] = "다음 공격 기술, 무기 강화, 독에 전체 DPS 표시"
-L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] = "%s, %s, 무기 강화와 독은 공격에 피해를 더합니다. 추가 DPS는 더해지는 피해, 전체 DPS는 이를 포함한 무기 전체입니다."
+L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] =
+  "%s, %s, 무기 강화와 독은 공격에 피해를 더합니다. 추가 DPS는 더해지는 피해, 전체 DPS는 이를 포함한 무기 전체입니다."
 L["Auto attacks"] = "자동 공격"
 L["%s, %s and %s with a wand: damage per second of your weapons."] = "%s, %s, %s: 무기의 초당 피해량입니다."
 
@@ -256,20 +264,23 @@ L["Pets: show on"] = "소환수: 표시 위치"
 L["Finishers"] = "마무리 일격"
 L["Lines on finishers"] = "마무리 일격 항목"
 L["Combo points for the lines"] = "항목에 쓸 연계 점수"
-L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] = "%s, %s 등 마무리 일격: 항목은 이 연계 점수로 계산하고 상세 정보에는 모두 표시합니다. DPS에는 연계 점수를 쌓는 시간이 빠져 있습니다."
+L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] =
+  "%s, %s 등 마무리 일격: 항목은 이 연계 점수로 계산하고 상세 정보에는 모두 표시합니다. DPS에는 연계 점수를 쌓는 시간이 빠져 있습니다."
 L["Pets and finishers"] = "소환수와 마무리 일격"
 
 -- Options/RulesTab.lua
 L["Hide the lines"] = "항목 숨기기"
 L["Set the average damage"] = "평균 피해 지정"
-L["No such spell. Names only work for spells you know."] = "그런 주문이 없습니다. 이름은 배운 주문에만 쓸 수 있습니다."
+L["No such spell. Names only work for spells you know."] =
+  "그런 주문이 없습니다. 이름은 배운 주문에만 쓸 수 있습니다."
 L["Enter a number above 0."] = "0보다 큰 숫자를 입력하세요."
 L["Saved: %s"] = "저장됨: %s"
 L["Editing %s. Change it and press Save."] = "%s 편집 중. 바꾼 뒤 저장을 누르세요."
 L["Remove"] = "삭제"
 L["Edit"] = "편집"
 L["Add or change a rule"] = "규칙 추가 또는 변경"
-L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] = "주문의 항목을 숨기거나 평균 피해를 고정합니다. /sp hide, /sp pin, /sp show로도 됩니다."
+L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] =
+  "주문의 항목을 숨기거나 평균 피해를 고정합니다. /sp hide, /sp pin, /sp show로도 됩니다."
 L["Spell name or ID"] = "주문 이름 또는 ID"
 L["Rule"] = "규칙"
 L["Average damage"] = "평균 피해"
@@ -295,7 +306,8 @@ L["Reset"] = "초기화"
 L["Reset current profile"] = "현재 프로필 초기화"
 L["Reset this profile, spell rules included?"] = "주문 규칙을 포함해 이 프로필을 초기화할까요?"
 L["Share"] = "공유"
-L["Share this profile as a string. Imports ask before replacing anything."] = "프로필을 문자열로 공유합니다. 가져오기는 덮어쓰기 전에 먼저 묻습니다."
+L["Share this profile as a string. Imports ask before replacing anything."] =
+  "프로필을 문자열로 공유합니다. 가져오기는 덮어쓰기 전에 먼저 묻습니다."
 L["Profiles"] = "프로필"
 
 -- Spells.lua

@@ -6,13 +6,7 @@ local _, ns = ...
 local Resources = {}
 
 Resources.TYPES = {
-    [0] = {
-        token = "MANA",
-        nameTag = "MANA",
-        costTag = "MANA_COST",
-        labels = {dmg = "DPM", heal = "HPM"},
-        enabled = true,
-    },
+    [0] = {token = "MANA", nameTag = "MANA", costTag = "MANA_COST", labels = {dmg = "DPM", heal = "HPM"}, enabled = true},
     [1] = {
         token = "RAGE",
         nameTag = "RAGE",
@@ -38,13 +32,7 @@ Resources.TYPES = {
         defaultMax = 100,
     },
     -- only ever next to energy or rage (Rip, Eviscerate)
-    [4] = {
-        token = "COMBO_POINTS",
-        nameTag = "COMBO_POINTS",
-        costTag = "COMBO_POINTS_COST",
-        defaultMax = 5,
-        noMetrics = true,
-    },
+    [4] = {token = "COMBO_POINTS", nameTag = "COMBO_POINTS", costTag = "COMBO_POINTS_COST", defaultMax = 5, noMetrics = true},
 }
 
 -- power types not listed above

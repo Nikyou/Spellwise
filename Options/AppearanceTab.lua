@@ -19,7 +19,9 @@ local function look() return ns.addon.db.profile.look end
 
 local function fontItems()
     local items = {{value = "", text = L["Tooltip font"]}}
-    for _, name in ipairs(LSM:List("font")) do items[#items + 1] = {value = name, text = name, font = LSM:Fetch("font", name, true)} end
+    for _, name in ipairs(LSM:List("font")) do
+        items[#items + 1] = {value = name, text = name, font = LSM:Fetch("font", name, true)}
+    end
     return items
 end
 
@@ -48,9 +50,7 @@ local function refreshPreview()
     for i, built in ipairs(preview.samples) do
         local title = i == 1 and L["Fire bolt (made up)"] or L["Healing wave (made up)"]
         line(title, {1, 1, 1})
-        for n = 1, #built, 2 do
-            if index < PREVIEW_LINES then line(built[n], Tooltip.Color(built[n + 1], built.school)) end
-        end
+        for n = 1, #built, 2 do if index < PREVIEW_LINES then line(built[n], Tooltip.Color(built[n + 1], built.school)) end end
         y = y - 8
     end
     for n = index + 1, #preview.lines do preview.lines[n]:Hide() end
@@ -64,9 +64,7 @@ end
 local function create(parent)
     local left = Options.Column(parent, 0, COLUMN)
     left.title(L["Colours"])
-    for _, entry in ipairs({
-        {"damageColor", L["Damage lines"]}, {"healColor", L["Healing lines"]}, {"costColor", L["Cost line"]},
-    }) do
+    for _, entry in ipairs({{"damageColor", L["Damage lines"]}, {"healColor", L["Healing lines"]}, {"costColor", L["Cost line"]}}) do
         local swatch = W.ColorSwatch(parent, entry[2], function(color) set(entry[1], color) end)
         left.place(swatch, 26, 2)
         controls[entry[1]] = swatch

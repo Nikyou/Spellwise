@@ -239,9 +239,7 @@ function Format.Breakdown(m, L, fmt, schoolName, costTexts, out, show)
     end
     local hasHealing = breakdownSide(out, m.heal, L, fmt, "heal", show)
     if not (hasDamage or hasHealing) then return out end
-    if show.costs then
-        for _, text in ipairs(costTexts or {}) do out[#out + 1] = format(L["Cost: %s"], text) end
-    end
+    if show.costs then for _, text in ipairs(costTexts or {}) do out[#out + 1] = format(L["Cost: %s"], text) end end
     if show.notes then
         if m.area then out[#out + 1] = L["Values are per target"] end
         if m.pinned then out[#out + 1] = L["Average damage set by a spell rule"] end
@@ -268,7 +266,7 @@ function Format.ImbueLines(info, o, L, fmt, out)
         local added, total = Format.Number(hand.added, o.decimals, fmt), Format.Number(hand.total, o.decimals, fmt)
         if info.perHand then
             out[#out + 1] = o.swingTotal and format(L["%s: Added DPS %s, Total DPS %s"], hand.name, added, total)
-                            or format(L["%s: Added DPS %s"], hand.name, added)
+                              or format(L["%s: Added DPS %s"], hand.name, added)
             out[#out + 1] = "dmg"
         else
             out[#out + 1] = format("%s: %s", L["Added DPS"], added)
@@ -290,8 +288,8 @@ function Format.ImbueDetails(info, L, fmt, out, show)
     if show.amounts then
         for _, hand in ipairs(info.hands) do
             if hand.chance then
-                out[#out + 1] = format(L["%s: %s%% of hits, a swing every %s sec"], hand.name, Format.Number(hand.chance * 100, 1, fmt),
-                                       Format.Number(hand.swing, 2, fmt))
+                out[#out + 1] = format(L["%s: %s%% of hits, a swing every %s sec"], hand.name,
+                                       Format.Number(hand.chance * 100, 1, fmt), Format.Number(hand.swing, 2, fmt))
             end
         end
         if info.ap then

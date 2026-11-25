@@ -47,7 +47,8 @@ L["DPE"] = "傷害/能量"
 L["HPE"] = "治療/能量"
 L["DPF"] = "傷害/集中"
 L["HPF"] = "治療/集中"
-L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] = "目前還無法讀取你的遊戲語言（%s）的傷害和治療數值，只顯示消耗。如果想幫忙，請把 /sp dump all 的結果傳給作者。"
+L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] =
+  "目前還無法讀取你的遊戲語言（%s）的傷害和治療數值，只顯示消耗。如果想幫忙，請把 /sp dump all 的結果傳給作者。"
 L["Free now, normally %s"] = "目前免費，平時為%s"
 L["Free now"] = "目前免費"
 L["Hold %s for details"] = "按住%s查看詳細資訊"
@@ -120,7 +121,8 @@ L["%s: %s per hit, every %s sec"] = "%s：每次命中%s，每%s秒一次"
 L["From your weapon damage and attack power, before armor"] = "根據你的武器傷害和攻擊強度計算，未計護甲"
 L["Replaces a %s main hand swing, plus %s"] = "取代一次%s點的主手攻擊，外加%s"
 L["swing time"] = "攻擊速度"
-L["Replaces your next swing: values if used on every swing"] = "取代你的下一次攻擊：數值以每次攻擊都使用計算"
+L["Replaces your next swing: values if used on every swing"] =
+  "取代你的下一次攻擊：數值以每次攻擊都使用計算"
 L["Against a poisoned target: %s"] = "對中毒目標：%s"
 L["Against Giants, Dragonkin and mounted targets: %s"] = "對巨人、龍類和騎乘目標：%s"
 L["Main target: %s"] = "主要目標：%s"
@@ -192,17 +194,21 @@ L["Pets have their own tab."] = "寵物有獨立的分頁。"
 L["Minimap"] = "小地圖"
 L["Show minimap button"] = "顯示小地圖按鈕"
 L["About the values"] = "關於數值"
-L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] = "滑鼠提示已包含你的加成，Spellwise直接採用顯示的數值。不計命中率。範圍法術以單一目標計算。"
+L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] =
+  "滑鼠提示已包含你的加成，Spellwise直接採用顯示的數值。不計命中率。範圍法術以單一目標計算。"
 L["Divide by the cooldown when it's longer than the cast."] = "冷卻時間比施法時間長時，除以冷卻時間。"
 L["Cost"] = "消耗"
 L["Per resource"] = "依資源"
 L["Include crit"] = "計入致命一擊"
-L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = "依你的致命一擊機率和天賦計算平均值，目標與你同等級。詳細資訊會顯示更高等級的目標。"
+L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] =
+  "依你的致命一擊機率和天賦計算平均值，目標與你同等級。詳細資訊會顯示更高等級的目標。"
 L["Weapons"] = "武器"
 L["Weapon abilities"] = "武器技能"
-L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = "%s、%s、%s等以武器攻擊的技能：根據你的武器傷害和攻擊強度計算。"
+L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] =
+  "%s、%s、%s等以武器攻擊的技能：根據你的武器傷害和攻擊強度計算。"
 L["Total DPS on next swing abilities, imbues and poisons"] = "下次攻擊技能、武器強化和毒藥顯示總DPS"
-L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] = "%s、%s、武器強化和毒藥會增加你的攻擊傷害。額外DPS是增加的部分，總DPS是武器加上它們的傷害。"
+L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] =
+  "%s、%s、武器強化和毒藥會增加你的攻擊傷害。額外DPS是增加的部分，總DPS是武器加上它們的傷害。"
 L["Auto attacks"] = "自動攻擊"
 L["%s, %s and %s with a wand: damage per second of your weapons."] = "%s、%s和魔杖%s：你武器的每秒傷害。"
 
@@ -256,7 +262,8 @@ L["Pets: show on"] = "寵物：顯示位置"
 L["Finishers"] = "終結技"
 L["Lines on finishers"] = "終結技的資訊行"
 L["Combo points for the lines"] = "資訊行使用的連擊點數"
-L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] = "%s、%s等終結技：資訊行以此連擊點數計算，詳細資訊顯示全部。DPS不計累積連擊點數的時間。"
+L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] =
+  "%s、%s等終結技：資訊行以此連擊點數計算，詳細資訊顯示全部。DPS不計累積連擊點數的時間。"
 L["Pets and finishers"] = "寵物和終結技"
 
 -- Options/RulesTab.lua
@@ -269,7 +276,8 @@ L["Editing %s. Change it and press Save."] = "正在編輯%s。修改後點擊�
 L["Remove"] = "移除"
 L["Edit"] = "編輯"
 L["Add or change a rule"] = "新增或修改規則"
-L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] = "隱藏法術的資訊行，或固定其平均傷害。也可用 /sp hide、/sp pin、/sp show。"
+L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] =
+  "隱藏法術的資訊行，或固定其平均傷害。也可用 /sp hide、/sp pin、/sp show。"
 L["Spell name or ID"] = "法術名稱或ID"
 L["Rule"] = "規則"
 L["Average damage"] = "平均傷害"
@@ -295,7 +303,8 @@ L["Reset"] = "重置"
 L["Reset current profile"] = "重置目前設定檔"
 L["Reset this profile, spell rules included?"] = "重置這個設定檔（包括法術規則）？"
 L["Share"] = "分享"
-L["Share this profile as a string. Imports ask before replacing anything."] = "以字串形式分享這個設定檔。匯入時會先詢問再取代。"
+L["Share this profile as a string. Imports ask before replacing anything."] =
+  "以字串形式分享這個設定檔。匯入時會先詢問再取代。"
 L["Profiles"] = "設定檔"
 
 -- Spells.lua

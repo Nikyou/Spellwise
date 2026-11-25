@@ -150,9 +150,7 @@ end
 
 function ImportExport.Apply(data, profile)
     profile = profile or ns.addon.db.profile
-    for _, section in ipairs(SECTIONS) do
-        for key, value in pairs(data[section]) do profile[section][key] = value end
-    end
+    for _, section in ipairs(SECTIONS) do for key, value in pairs(data[section]) do profile[section][key] = value end end
     if data.costMode then profile.costMode = data.costMode end
     for powerType, settings in pairs(data.resources) do profile.resources[powerType] = settings end
     wipe(profile.rules)

@@ -256,9 +256,7 @@ end
 
 function Options:Confirm(message, buttons) self:ShowDialog({title = L["Please confirm"], message = message, buttons = buttons}) end
 
-function Options:ShowMessage(message)
-    self:ShowDialog({title = ADDON_NAME, message = message, buttons = {{label = L["Close"]}}})
-end
+function Options:ShowMessage(message) self:ShowDialog({title = ADDON_NAME, message = message, buttons = {{label = L["Close"]}}}) end
 
 function Options:ShowProfileExport()
     self:ShowDialog({
@@ -283,8 +281,9 @@ local function importIntoNew(data, name)
     if name == "" then return Options:ShowMessage(L["Enter a profile name."]) end
     for _, existing in ipairs(ns.addon.db:GetProfiles()) do
         if existing == name then
-            return Options:Confirm(format(L["The profile \"%s\" already exists. Overwrite it?"], name),
-                                   {{label = L["Overwrite"], onClick = function() importOver(data, name) end}, {label = L["Cancel"]}})
+            return Options:Confirm(format(L["The profile \"%s\" already exists. Overwrite it?"], name), {
+                {label = L["Overwrite"], onClick = function() importOver(data, name) end}, {label = L["Cancel"]},
+            })
         end
     end
     importOver(data, name)
@@ -305,8 +304,7 @@ local function chooseTarget(text)
         field = {label = L["New profile name"], text = L["Imported"]},
         buttons = {
             {label = L["Create profile"], onClick = function(name) importIntoNew(data, name) end},
-            {label = L["Into current"], onClick = function() importIntoCurrent(data) end},
-            {label = L["Cancel"]},
+            {label = L["Into current"], onClick = function() importIntoCurrent(data) end}, {label = L["Cancel"]},
         },
     })
 end
@@ -340,9 +338,7 @@ Options.RIGHT = Options.COLUMN + 30
 function Options.Profile() return ns.addon.db.profile end
 
 -- a check box callback that saves profile[section][key]
-function Options.Setter(section, key)
-    return function(checked) ns.addon.db.profile[section][key] = checked end
-end
+function Options.Setter(section, key) return function(checked) ns.addon.db.profile[section][key] = checked end end
 
 function Options.Column(parent, x, width)
     local col = {y = 0}

@@ -47,7 +47,8 @@ L["DPE"] = "DPE"
 L["HPE"] = "HPE"
 L["DPF"] = "DPF"
 L["HPF"] = "HPF"
-L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] = "Für Eure Spielsprache (%s) gibt es noch keine Schadens- oder Heilungswerte, nur Kosten. Um zu helfen, schickt dem Autor /sp dump all."
+L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] =
+  "Für Eure Spielsprache (%s) gibt es noch keine Schadens- oder Heilungswerte, nur Kosten. Um zu helfen, schickt dem Autor /sp dump all."
 L["Free now, normally %s"] = "Gerade kostenlos, sonst %s"
 L["Free now"] = "Gerade kostenlos"
 L["Hold %s for details"] = "Für Details %s halten"
@@ -120,7 +121,8 @@ L["%s: %s per hit, every %s sec"] = "%s: %s pro Treffer, alle %s Sek."
 L["From your weapon damage and attack power, before armor"] = "Aus Eurem Waffenschaden und Eurer Angriffskraft, vor Rüstung"
 L["Replaces a %s main hand swing, plus %s"] = "Ersetzt einen Schlag der Waffenhand mit %s, plus %s"
 L["swing time"] = "Angriffstempo"
-L["Replaces your next swing: values if used on every swing"] = "Ersetzt Euren nächsten Schlag: Werte bei Einsatz bei jedem Schlag"
+L["Replaces your next swing: values if used on every swing"] =
+  "Ersetzt Euren nächsten Schlag: Werte bei Einsatz bei jedem Schlag"
 L["Against a poisoned target: %s"] = "Gegen ein vergiftetes Ziel: %s"
 L["Against Giants, Dragonkin and mounted targets: %s"] = "Gegen Riesen, Drachkin und berittene Ziele: %s"
 L["Main target: %s"] = "Hauptziel: %s"
@@ -192,19 +194,25 @@ L["Pets have their own tab."] = "Begleiter haben einen eigenen Reiter."
 L["Minimap"] = "Minikarte"
 L["Show minimap button"] = "Minikartenknopf anzeigen"
 L["About the values"] = "Zu den Werten"
-L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] = "Tooltipps enthalten Eure Boni bereits, Spellwise übernimmt sie wie angezeigt. Ohne Trefferchance. Flächenzauber: pro Ziel."
+L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] =
+  "Tooltipps enthalten Eure Boni bereits, Spellwise übernimmt sie wie angezeigt. Ohne Trefferchance. Flächenzauber: pro Ziel."
 L["Divide by the cooldown when it's longer than the cast."] = "Durch die Abklingzeit teilen, wenn sie länger als das Wirken ist."
 L["Cost"] = "Kosten"
 L["Per resource"] = "Pro Ressource"
 L["Include crit"] = "Krit einrechnen"
-L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = "Durchschnitt mit Eurer kritischen Trefferchance und Euren Talenten, gegen ein Ziel Eurer Stufe. Die Details zeigen höhere Stufen."
+L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] =
+  "Durchschnitt mit Eurer kritischen Trefferchance und Euren Talenten, gegen ein Ziel Eurer Stufe. Die Details zeigen höhere Stufen."
 L["Weapons"] = "Waffen"
 L["Weapon abilities"] = "Waffenfähigkeiten"
-L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = "%s, %s, %s und andere Fähigkeiten, die mit einer Waffe treffen: aus Eurem Waffenschaden und Eurer Angriffskraft."
-L["Total DPS on next swing abilities, imbues and poisons"] = "Gesamt-DPS bei Fähigkeiten für den nächsten Schlag, Waffenverzauberungen und Giften"
-L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] = "%s, %s, Waffenverzauberungen und Gifte verstärken Eure Schläge. Zusätzliche DPS ist, was sie hinzufügen, Gesamt-DPS die der Waffe mit ihnen."
+L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] =
+  "%s, %s, %s und andere Fähigkeiten, die mit einer Waffe treffen: aus Eurem Waffenschaden und Eurer Angriffskraft."
+L["Total DPS on next swing abilities, imbues and poisons"] =
+  "Gesamt-DPS bei Fähigkeiten für den nächsten Schlag, Waffenverzauberungen und Giften"
+L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] =
+  "%s, %s, Waffenverzauberungen und Gifte verstärken Eure Schläge. Zusätzliche DPS ist, was sie hinzufügen, Gesamt-DPS die der Waffe mit ihnen."
 L["Auto attacks"] = "Automatische Angriffe"
-L["%s, %s and %s with a wand: damage per second of your weapons."] = "%s, %s und %s mit dem Zauberstab: Schaden pro Sekunde Eurer Waffen."
+L["%s, %s and %s with a wand: damage per second of your weapons."] =
+  "%s, %s und %s mit dem Zauberstab: Schaden pro Sekunde Eurer Waffen."
 
 -- Options/DetailsTab.lua
 L["Never"] = "Nie"
@@ -256,7 +264,8 @@ L["Pets: show on"] = "Begleiter: anzeigen bei"
 L["Finishers"] = "Finishing-Moves"
 L["Lines on finishers"] = "Zeilen bei Finishing-Moves"
 L["Combo points for the lines"] = "Combopunkte für die Zeilen"
-L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] = "%s, %s und andere Finishing-Moves: Die Zeilen nutzen so viele Combopunkte, die Details zeigen alle. DPS ohne den Aufbau der Punkte."
+L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] =
+  "%s, %s und andere Finishing-Moves: Die Zeilen nutzen so viele Combopunkte, die Details zeigen alle. DPS ohne den Aufbau der Punkte."
 L["Pets and finishers"] = "Begleiter und Finisher"
 
 -- Options/RulesTab.lua
@@ -269,7 +278,8 @@ L["Editing %s. Change it and press Save."] = "%s wird bearbeitet. Ändern und 'S
 L["Remove"] = "Entfernen"
 L["Edit"] = "Bearbeiten"
 L["Add or change a rule"] = "Regel hinzufügen oder ändern"
-L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] = "Zeilen eines Zaubers ausblenden oder seinen Durchschnittsschaden festlegen. Auch /sp hide, /sp pin, /sp show."
+L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] =
+  "Zeilen eines Zaubers ausblenden oder seinen Durchschnittsschaden festlegen. Auch /sp hide, /sp pin, /sp show."
 L["Spell name or ID"] = "Zaubername oder ID"
 L["Rule"] = "Regel"
 L["Average damage"] = "Durchschnittsschaden"
@@ -295,7 +305,8 @@ L["Reset"] = "Zurücksetzen"
 L["Reset current profile"] = "Aktuelles Profil zurücksetzen"
 L["Reset this profile, spell rules included?"] = "Dieses Profil samt Zauberregeln zurücksetzen?"
 L["Share"] = "Teilen"
-L["Share this profile as a string. Imports ask before replacing anything."] = "Dieses Profil als Text teilen. Ein Import fragt, bevor er etwas ersetzt."
+L["Share this profile as a string. Imports ask before replacing anything."] =
+  "Dieses Profil als Text teilen. Ein Import fragt, bevor er etwas ersetzt."
 L["Profiles"] = "Profile"
 
 -- Spells.lua

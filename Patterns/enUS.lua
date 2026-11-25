@@ -33,18 +33,18 @@ ns.Patterns.enUS = {
     },
     area = {
         "nearby", "enemies near", "all enemies", "all enemy", "enemies within", "enemies in", "targets within", "party members",
-        "group members", "raid members", "creatures within", "target area", "around the caster", "in a cone",
-        "in front of", "additional targets", "enter the area", "their party", "to all within", "members of your raid",
+        "group members", "raid members", "creatures within", "target area", "around the caster", "in a cone", "in front of",
+        "additional targets", "enter the area", "their party", "to all within", "members of your raid",
     },
     lasts = {"lasts {d}", "for {d}"},
     rules = {
         -- Hellfire burns the caster too, that's not damage the spell deals
         {"none", "ignore", {"{v} {s}damage to himself", "{v} {s}damage to herself"}},
         -- Feedback: damage per mana burned is a rate, not an amount
-        {"none", "ignore", "{v} {s}damage for each point of mana"},
-        {"none", "ignore", {"to life with {v} health", "healing done for {d}", "for {n}% of your maximum health",
-                              "{v} damage taken per hit"}},
-        {"absorb", "direct", {"absorb{w} {v} {s}damage", "absorb{w} the next {v} {s}damage"}},
+        {"none", "ignore", "{v} {s}damage for each point of mana"}, {
+            "none", "ignore",
+            {"to life with {v} health", "healing done for {d}", "for {n}% of your maximum health", "{v} damage taken per hit"},
+        }, {"absorb", "direct", {"absorb{w} {v} {s}damage", "absorb{w} the next {v} {s}damage"}},
         {"dmg", "charges", "surrounded by {n} {w}{x}struck for {v} {s}damage"},
         {"dmg", "hit", {"repeatedly attacks{w} within {n} yards for {v} {s}damage", "repeatedly attacks{x}for {v} {s}damage"}},
         {"drain", "tick", {"transfers {v} health every {d}", "transfers {v} health{w} every {d}"}},
@@ -52,18 +52,19 @@ ns.Patterns.enUS = {
         {"dmg", "tick", {"{v} {s}damage{w} every {d}", "{v} {s}damage{w} within {n} yards every {d}"}},
 
         {"heal", "tick", "heals {w}within {n} yards for {v} every {d}"},
-        {"heal", "tick", {"for {v} health every second", "{v} health{w} every second", "for {v} every second"},
-         interval = 1},
+        {"heal", "tick", {"for {v} health every second", "{v} health{w} every second", "for {v} every second"}, interval = 1},
         {"heal", "tick", {"for {v} every {d} for {d}", "for {v} every {d}"}, when = "helpful"},
-        {"auto", "over", "{v} {s}damage over {d}"},
-        {"heal", "over", "restore {v} health over {d}"},
-        {"heal", "over", {"{v} health over {d}", "{v} over {d}"}, when = "helpful"},
-        {"dmg", "direct", "{v} {s}damage"},
+        {"auto", "over", "{v} {s}damage over {d}"}, {"heal", "over", "restore {v} health over {d}"},
+        {"heal", "over", {"{v} health over {d}", "{v} over {d}"}, when = "helpful"}, {"dmg", "direct", "{v} {s}damage"},
         -- Shadow Cleave: "dealing 140 to 209 to each"
         {"dmg", "direct", "dealing {v} to each", when = "harmful"},
         -- "heal " with its space, or "with 5 health at the feet of the caster for 45 sec" reads as a heal
-        {"heal", "direct", {"{v} healing", "heals {w}for {v}", "heal {w}for {v}", "healing {w}for {v}",
-                            "heals {w}within {n} yards{w} for {v}", "healing {w}within {n} yards{w} for {v}",
-                            "heals {w} below {n}% health for {v}"}},
+        {
+            "heal", "direct", {
+                "{v} healing", "heals {w}for {v}", "heal {w}for {v}", "healing {w}for {v}",
+                "heals {w}within {n} yards{w} for {v}", "healing {w}within {n} yards{w} for {v}",
+                "heals {w} below {n}% health for {v}",
+            },
+        },
     },
 }

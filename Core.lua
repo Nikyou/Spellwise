@@ -26,8 +26,15 @@ local defaults = {
         },
         -- what the details show
         detailLines = {
-            amounts = true, time = true, school = true, costs = true, notes = true,
-            crit = true, levels = true, combo = true, extra = true,
+            amounts = true,
+            time = true,
+            school = true,
+            costs = true,
+            notes = true,
+            crit = true,
+            levels = true,
+            combo = true,
+            extra = true,
         },
         -- per power type. a type that's off in Engine/Resources.lua shows nothing, whatever is saved here
         resources = {
@@ -65,9 +72,7 @@ local defaults = {
 ns.DEFAULTS = defaults
 
 -- migrations[n] upgrades a profile from schema n - 1
-local migrations = {
-    [1] = function() end,
-}
+local migrations = {[1] = function() end}
 
 function addon:MigrateProfile()
     local profile = self.db.profile
@@ -165,8 +170,8 @@ function addon:OnInitialize()
 end
 
 local POWER_EVENTS = {
-    "UNIT_MAXPOWER", "UNIT_DISPLAYPOWER", "UNIT_PET", "UPDATE_SHAPESHIFT_FORM", "PLAYER_ENTERING_WORLD",
-    "PLAYER_TALENT_UPDATE", "TRAIT_CONFIG_UPDATED", "CHARACTER_POINTS_CHANGED", "PLAYER_EQUIPMENT_CHANGED", "PLAYER_LEVEL_UP",
+    "UNIT_MAXPOWER", "UNIT_DISPLAYPOWER", "UNIT_PET", "UPDATE_SHAPESHIFT_FORM", "PLAYER_ENTERING_WORLD", "PLAYER_TALENT_UPDATE",
+    "TRAIT_CONFIG_UPDATED", "CHARACTER_POINTS_CHANGED", "PLAYER_EQUIPMENT_CHANGED", "PLAYER_LEVEL_UP",
 }
 -- these can change costs for good. form changes don't belong here, they pass
 local COST_EVENTS = {
@@ -179,7 +184,12 @@ local COST_EVENTS = {
     PLAYER_LEVEL_UP = true,
 }
 
-local TALENT_EVENTS = {PLAYER_ENTERING_WORLD = true, PLAYER_TALENT_UPDATE = true, TRAIT_CONFIG_UPDATED = true, CHARACTER_POINTS_CHANGED = true}
+local TALENT_EVENTS = {
+    PLAYER_ENTERING_WORLD = true,
+    PLAYER_TALENT_UPDATE = true,
+    TRAIT_CONFIG_UPDATED = true,
+    CHARACTER_POINTS_CHANGED = true,
+}
 
 local function onEvent(_, event, ...)
     if COST_EVENTS[event] then ns.NormalCost.Clear() end
@@ -222,8 +232,7 @@ local function printHelp()
     line("dump", L["raw data of the spell under the mouse"])
     line("dump <spell>", L["the same for a spell ID or name"])
     line("dump test", L["one spell of each kind"])
-    line("dump <class>", format(L["a class, one rank per wording. Classes: %s"],
-                                ns.Dump.ClassList()))
+    line("dump <class>", format(L["a class, one rank per wording. Classes: %s"], ns.Dump.ClassList()))
     line("dump all", L["the test set and all classes"])
     line("hide <spell>", L["hide Spellwise lines on a spell"])
     line("pin <spell> <average>", L["set a spell's average damage"])
@@ -308,5 +317,9 @@ end
 function addon:SetMinimapButtonShown(shown)
     self.db.profile.minimap.hide = not shown
     local icon = LibStub("LibDBIcon-1.0")
-    if shown then icon:Show(ADDON_NAME) else icon:Hide(ADDON_NAME) end
+    if shown then
+        icon:Show(ADDON_NAME)
+    else
+        icon:Hide(ADDON_NAME)
+    end
 end

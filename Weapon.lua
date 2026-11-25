@@ -124,9 +124,17 @@ function Weapon.Hands()
     local function hand(key, avg, swing, percent)
         local item = not paws and itemInfo(SLOTS[key])
         hands[key] = {
-            key = key, name = handName(key), avg = avg, swing = swing, percent = percent, share = key == "oh" and 0.5 or 1,
-            speed = item and item.speed or swing, normal = item and item.normal, dagger = item and item.dagger,
-            wand = item and item.wand, armed = paws or item ~= nil,
+            key = key,
+            name = handName(key),
+            avg = avg,
+            swing = swing,
+            percent = percent,
+            share = key == "oh" and 0.5 or 1,
+            speed = item and item.speed or swing,
+            normal = item and item.normal,
+            dagger = item and item.dagger,
+            wand = item and item.wand,
+            armed = paws or item ~= nil,
         }
     end
     hand("mh", s.mh, s.mhSpeed, s.percent)
@@ -237,8 +245,14 @@ local function procAmounts(spellID, entry, w)
         local ap = textBonus(spellID, desc, atLevel(entry.ap)) or atLevel(entry.ap)
         -- each extra attack is a swing of this weapon with the attack power added
         local hit = w.avg + ap * w.speed / Metrics.AP_PER_DPS * w.percent * w.share
-        return {chance = entry.chance / 100, lockout = entry.lockout, perProc = entry.attacks * hit, attacks = entry.attacks,
-                hit = hit, melee = true}
+        return {
+            chance = entry.chance / 100,
+            lockout = entry.lockout,
+            perProc = entry.attacks * hit,
+            attacks = entry.attacks,
+            hit = hit,
+            melee = true,
+        }
     elseif kind == "flametongue" then
         local a = atLevel(entry.perSpeed)
         local low0, high0 = a / 77 - 1 + entry.flat, a / 25 + entry.flat
@@ -254,8 +268,15 @@ local function procAmounts(spellID, entry, w)
         if not r then return nil end
         if r.dmg.direct > 0 then return {chance = entry.chance / 100, perProc = r.dmg.direct, school = r.dmg.school} end
         if r.dmg.periodic > 0 then
-            return {chance = entry.chance / 100, tick = r.dmg.periodic, interval = r.dmg.duration, stacks = entry.stacks,
-                    duration = entry.duration, school = r.dmg.school, tickCrit = entry.tickCrit}
+            return {
+                chance = entry.chance / 100,
+                tick = r.dmg.periodic,
+                interval = r.dmg.duration,
+                stacks = entry.stacks,
+                duration = entry.duration,
+                school = r.dmg.school,
+                tickCrit = entry.tickCrit,
+            }
         end
     end
 end
@@ -345,7 +366,13 @@ function Weapon.Imbue(spellID, entry, critFor)
             -- a poison's total is its hand's, an imbue's both hands' like Attack
             local white = whiteDPS(w, critFor)
             if not info.perHand and weapons.oh and weapons.oh.armed then white = white + whiteDPS(weapons.oh, critFor) end
-            info.hands[#info.hands + 1] = {name = w.name, added = added, total = white + added, chance = a.chance, swing = w.swing}
+            info.hands[#info.hands + 1] = {
+                name = w.name,
+                added = added,
+                total = white + added,
+                chance = a.chance,
+                swing = w.swing,
+            }
         end
     end
     if #info.hands == 0 then return nil end
@@ -413,14 +440,21 @@ function Weapon.Strike(spellID, entry, desc, parsed, critFor)
     local bonus = textBonus(spellID, desc, expected, entry[4]) or expected
     local total, strike = Metrics.WeaponStrike(weapons, hand == "ranged" and all.rap or all.ap, normalized, percent, bonus)
     if entry.extra then
-        strike.extra = {entry.extra[1], entry.extra[2], entry.extra[1] == "flametongue" and (Spells.Name(8024) or "Flametongue Weapon")}
+        strike.extra = {
+            entry.extra[1], entry.extra[2], entry.extra[1] == "flametongue" and (Spells.Name(8024) or "Flametongue Weapon"),
+        }
     end
     strike.applied = appliedOn(weapons, true, critFor)
-    local dmg = {direct = total, periodic = 0, perHit = 0, school = entry.school or "PHYSICAL", strike = strike, fromWeapon = true}
+    local dmg = {
+        direct = total,
+        periodic = 0,
+        perHit = 0,
+        school = entry.school or "PHYSICAL",
+        strike = strike,
+        fromWeapon = true,
+    }
     -- the swing would hit anyway: its time is the swing's, and the cost buys only the bonus
-    if entry.swing then
-        strike.swing, dmg.added = true, bonus * weapons[1].percent
-    end
+    if entry.swing then strike.swing, dmg.added = true, bonus * weapons[1].percent end
     return {
         dmg = dmg,
         heal = emptyHeal(),
@@ -448,8 +482,15 @@ function Weapon.Auto(spellID, critFor)
     local wand = kind == "wand"
     return {
         -- a wand's school is the wand's, the sheet doesn't say
-        dmg = {direct = 0, periodic = 0, perHit = out[1].hit, hands = out, school = not wand and "PHYSICAL" or nil,
-               fromWeapon = not wand, applied = kind == "melee" and appliedOn(list, false, critFor) or nil},
+        dmg = {
+            direct = 0,
+            periodic = 0,
+            perHit = out[1].hit,
+            hands = out,
+            school = not wand and "PHYSICAL" or nil,
+            fromWeapon = not wand,
+            applied = kind == "melee" and appliedOn(list, false, critFor) or nil,
+        },
         heal = emptyHeal(),
         area = false,
         -- wand shots crit like spells
@@ -483,8 +524,9 @@ function Weapon.Describe(out)
         local line = format("  item %s = id=%s", key, value(id))
         if number(id) then
             local equipLoc, classID, subclassID = itemInstant(id)
-            line = line .. format(" equipLoc=%s class=%s/%s speed=%s", value(equipLoc), value(classID), value(subclassID),
-                                  value(tooltipSpeed(slot)))
+            line = line
+                     .. format(" equipLoc=%s class=%s/%s speed=%s", value(equipLoc), value(classID), value(subclassID),
+                               value(tooltipSpeed(slot)))
         end
         out[#out + 1] = line
     end

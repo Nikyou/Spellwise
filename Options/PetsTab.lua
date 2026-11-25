@@ -31,18 +31,19 @@ local function create(parent)
     right.title(L["Finishers"])
     controls.comboShow = right.check(L["Lines on finishers"], setter("combo", "show"))
     right.label(L["Combo points for the lines"])
-    controls.points = W.Dropdown(parent, 120, function() return POINTS end, function(value)
-        profile().combo.points = value
-    end)
+    controls.points = W.Dropdown(parent, 120, function() return POINTS end, function(value) profile().combo.points = value end)
     right.place(controls.points, 32)
     -- spell names from the game, so they read in the player's language
-    right.help(format(L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."],
-                      ns.Spells.Name(2098) or "Eviscerate", ns.Spells.Name(1079) or "Rip"), 0)
+    right.help(format(
+                 L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."],
+                 ns.Spells.Name(2098) or "Eviscerate", ns.Spells.Name(1079) or "Rip"), 0)
 end
 
 local function refresh()
     local p = profile()
-    for _, key in ipairs({"actionBar", "spellbook", "dps", "hps", "perCost", "costLine"}) do controls[key]:SetChecked(p.pets[key]) end
+    for _, key in ipairs({"actionBar", "spellbook", "dps", "hps", "perCost", "costLine"}) do
+        controls[key]:SetChecked(p.pets[key])
+    end
     controls.comboShow:SetChecked(p.combo.show)
     controls.points:SetValue(p.combo.points)
 end

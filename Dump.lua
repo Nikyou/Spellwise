@@ -213,7 +213,7 @@ local function show()
         instance = "dump",
         title = L["Spellwise dump"],
         message = current.missing > 0 and format(L["Loading %d spell(s), the text updates."], current.missing)
-                  or L["Copy with Ctrl+A, Ctrl+C and send it to the author."],
+          or L["Copy with Ctrl+A, Ctrl+C and send it to the author."],
         input = {text = current.text, readOnly = true},
         buttons = {{label = L["Close"]}},
     })
@@ -296,7 +296,8 @@ local function shownLines()
     local list = {}
     for _, line in ipairs(data.lines) do
         if type(line) == "table" and not isSecret(line) then
-            list[#list + 1] = "type=" .. value(line.type) .. " left=" .. value(line.leftText) .. " right=" .. value(line.rightText)
+            list[#list + 1] =
+              "type=" .. value(line.type) .. " left=" .. value(line.leftText) .. " right=" .. value(line.rightText)
         end
     end
     return list

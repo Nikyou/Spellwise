@@ -374,9 +374,7 @@ function Parser.WeaponBonus(text, pack, expected, percent)
 end
 
 -- the row for a number of combo points, or the closest one below it
-function Parser.ComboRow(r, points)
-    for n = points, 1, -1 do if r.combo[n] then return r.combo[n], n end end
-end
+function Parser.ComboRow(r, points) for n = points, 1, -1 do if r.combo[n] then return r.combo[n], n end end end
 
 function Parser.HasDamage(r) return r.dmg.direct > 0 or r.dmg.periodic > 0 or r.dmg.perHit > 0 end
 function Parser.HasHealing(r) return r.heal.direct > 0 or r.heal.periodic > 0 or r.heal.absorb > 0 end

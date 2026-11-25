@@ -28,7 +28,8 @@ L["Usage: /sp show <spell ID or name>"] = "Использование: /sp show 
 L["Lines hidden on %s."] = "Строки скрыты у %s."
 L["Rule removed from %s."] = "Правило удалено у %s."
 L["%s has no rule."] = "У %s нет правила."
-L["Usage: /sp pin <spell ID or name> <average damage>"] = "Использование: /sp pin <ID или название заклинания> <средний урон>"
+L["Usage: /sp pin <spell ID or name> <average damage>"] =
+  "Использование: /sp pin <ID или название заклинания> <средний урон>"
 L["Average damage of %s set to %s."] = "Средний урон %s теперь %s."
 L["No spell rules."] = "Правил заклинаний нет."
 L["Unknown command \"%s\"."] = "Неизвестная команда \"%s\"."
@@ -47,14 +48,16 @@ L["DPE"] = "Урон/энерг."
 L["HPE"] = "Исцел./энерг."
 L["DPF"] = "Урон/конц."
 L["HPF"] = "Исцел./конц."
-L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] = "Для языка клиента (%s) пока нет урона и исцеления, только стоимость. Чтобы помочь, отправьте автору /sp dump all."
+L["No damage or healing values for your game language (%s) yet, only costs. To help, send the author /sp dump all."] =
+  "Для языка клиента (%s) пока нет урона и исцеления, только стоимость. Чтобы помочь, отправьте автору /sp dump all."
 L["Free now, normally %s"] = "Сейчас бесплатно, обычно %s"
 L["Free now"] = "Сейчас бесплатно"
 L["Hold %s for details"] = "Удерживайте %s для подробностей"
 L["Combo points: %d"] = "Длина серии: %d"
 L["Combo points %d: %s"] = "Серия %d: %s"
 L["%s damage"] = "%s ед. урона"
-L["Crit can't be read right now, it's left out"] = "Шанс крит. удара сейчас недоступен, он не учтен"
+L["Crit can't be read right now, it's left out"] =
+  "Шанс крит. удара сейчас недоступен, он не учтен"
 L["Heal crit %s%% ×%s: +%s%% on average"] = "Крит. исцеление %s%% ×%s: в среднем +%s%%"
 L["Crit %s%% ×%s: +%s%% on average"] = "Крит %s%% ×%s: в среднем +%s%%"
 L["Target level +%d (boss): crit %s%%, %s"] = "Уровень цели +%d (босс): крит %s%%, %s"
@@ -64,16 +67,19 @@ L["Spell crit doesn't depend on target level"] = "Крит заклинаний 
 -- Dump.lua
 L["Spellwise dump"] = "Данные Spellwise"
 L["Loading %d spell(s), the text updates."] = "Загружается заклинаний: %d, текст обновится."
-L["Copy with Ctrl+A, Ctrl+C and send it to the author."] = "Скопируйте (Ctrl+A, Ctrl+C) и отправьте автору."
+L["Copy with Ctrl+A, Ctrl+C and send it to the author."] =
+  "Скопируйте (Ctrl+A, Ctrl+C) и отправьте автору."
 L["Close"] = "Закрыть"
-L["Hover a spell or name one: /sp dump <spell>"] = "Наведите курсор на заклинание или укажите его: /sp dump <заклинание>"
+L["Hover a spell or name one: /sp dump <spell>"] =
+  "Наведите курсор на заклинание или укажите его: /sp dump <заклинание>"
 L["\"%s\" is no spell or class. Classes: %s"] = "\"%s\" не заклинание и не класс. Классы: %s"
 
 -- ImportExport.lua
 L["The import string is empty."] = "Строка импорта пуста."
 L["This is not a Spellwise profile string."] = "Это не строка профиля Spellwise."
 L["The import string is damaged."] = "Строка импорта повреждена."
-L["This string needs a newer Spellwise."] = "Для этой строки нужна более новая версия Spellwise."
+L["This string needs a newer Spellwise."] =
+  "Для этой строки нужна более новая версия Spellwise."
 L["%d spell rule(s)"] = "Правил заклинаний: %d"
 L["Made with Spellwise %s"] = "Создано в Spellwise %s"
 L["All settings"] = "Все настройки"
@@ -117,10 +123,12 @@ L["%s%% of weapon damage plus %s"] = "%s%% урона от оружия и ещ�
 L["%s%% of weapon damage"] = "%s%% урона от оружия"
 L["Weapon damage plus %s"] = "Урон от оружия и еще %s"
 L["%s: %s per hit, every %s sec"] = "%s: %s за удар, каждые %s сек."
-L["From your weapon damage and attack power, before armor"] = "По урону вашего оружия и силе атаки, до учета брони"
+L["From your weapon damage and attack power, before armor"] =
+  "По урону вашего оружия и силе атаки, до учета брони"
 L["Replaces a %s main hand swing, plus %s"] = "Заменяет удар правой рукой (%s) и добавляет %s"
 L["swing time"] = "скорость атаки"
-L["Replaces your next swing: values if used on every swing"] = "Заменяет следующий удар: значения при применении на каждый удар"
+L["Replaces your next swing: values if used on every swing"] =
+  "Заменяет следующий удар: значения при применении на каждый удар"
 L["Against a poisoned target: %s"] = "По отравленной цели: %s"
 L["Against Giants, Dragonkin and mounted targets: %s"] = "По великанам, драконам и всадникам: %s"
 L["Main target: %s"] = "Основная цель: %s"
@@ -133,7 +141,8 @@ L["%s: Added DPS %s, Total DPS %s"] = "%s: прибавка ДПС %s, общи�
 L["%s: %s%% of hits, a swing every %s sec"] = "%s: %s%% ударов, удар каждые %s сек."
 L["%s extra attacks of %s each"] = "%s доп. атаки по %s"
 L["Per proc: %s"] = "За срабатывание: %s"
-L["Per proc: %s every %s sec, up to %s stacks"] = "За срабатывание: %s каждые %s сек., до %s наложений"
+L["Per proc: %s every %s sec, up to %s stacks"] =
+  "За срабатывание: %s каждые %s сек., до %s наложений"
 L["Attack power: +%s"] = "Сила атаки: +%s"
 L["From your auto attacks, abilities can add more"] = "По автоатакам, способности добавят еще"
 L["With %s: Added DPS %s"] = "С «%s»: прибавка ДПС %s"
@@ -149,10 +158,12 @@ L["Import profile"] = "Импорт профиля"
 L["Paste a profile string (Ctrl+V)."] = "Вставьте строку профиля (Ctrl+V)."
 L["Import"] = "Импорт"
 L["Enter a profile name."] = "Введите название профиля."
-L["The profile \"%s\" already exists. Overwrite it?"] = "Профиль \"%s\" уже существует. Перезаписать его?"
+L["The profile \"%s\" already exists. Overwrite it?"] =
+  "Профиль \"%s\" уже существует. Перезаписать его?"
 L["Overwrite"] = "Перезаписать"
 L["Cancel"] = "Отмена"
-L["Import into a new profile or over \"%s\"?"] = "Импортировать в новый профиль или поверх \"%s\"?"
+L["Import into a new profile or over \"%s\"?"] =
+  "Импортировать в новый профиль или поверх \"%s\"?"
 L["New profile name"] = "Название нового профиля"
 L["Imported"] = "Импорт"
 L["Create profile"] = "Создать профиль"
@@ -192,19 +203,26 @@ L["Pets have their own tab."] = "Для питомцев есть своя вк�
 L["Minimap"] = "Миникарта"
 L["Show minimap button"] = "Кнопка у миникарты"
 L["About the values"] = "О значениях"
-L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] = "Подсказки уже включают ваши бонусы, Spellwise берет их как есть. Без шанса попадания. Заклинания по области: на одну цель."
-L["Divide by the cooldown when it's longer than the cast."] = "Делить на восстановление, если оно дольше применения."
+L["Tooltips already include your bonuses, Spellwise takes them as shown. No hit chance. Area spells: per target."] =
+  "Подсказки уже включают ваши бонусы, Spellwise берет их как есть. Без шанса попадания. Заклинания по области: на одну цель."
+L["Divide by the cooldown when it's longer than the cast."] =
+  "Делить на восстановление, если оно дольше применения."
 L["Cost"] = "Стоимость"
 L["Per resource"] = "По ресурсам"
 L["Include crit"] = "Учитывать критические удары"
-L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] = "Среднее с вашим шансом крита и талантами, против цели вашего уровня. Подробности показывают цели выше уровнем."
+L["Average with your crit chance and talents, against a target of your level. The details show higher levels."] =
+  "Среднее с вашим шансом крита и талантами, против цели вашего уровня. Подробности показывают цели выше уровнем."
 L["Weapons"] = "Оружие"
 L["Weapon abilities"] = "Способности с оружием"
-L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] = "%s, %s, %s и другие способности, бьющие оружием: по урону оружия и силе атаки."
-L["Total DPS on next swing abilities, imbues and poisons"] = "Общий ДПС у способностей на следующий удар, усилений оружия и ядов"
-L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] = "%s, %s, усиления оружия и яды добавляют к вашим ударам. Прибавка ДПС: что они добавляют, общий ДПС: оружие вместе с ними."
+L["%s, %s, %s and other abilities that hit with a weapon: from your weapon damage and attack power."] =
+  "%s, %s, %s и другие способности, бьющие оружием: по урону оружия и силе атаки."
+L["Total DPS on next swing abilities, imbues and poisons"] =
+  "Общий ДПС у способностей на следующий удар, усилений оружия и ядов"
+L["%s, %s, imbues and poisons add to your swings. Added DPS is what they add, Total DPS the weapon's with them."] =
+  "%s, %s, усиления оружия и яды добавляют к вашим ударам. Прибавка ДПС: что они добавляют, общий ДПС: оружие вместе с ними."
 L["Auto attacks"] = "Автоатаки"
-L["%s, %s and %s with a wand: damage per second of your weapons."] = "%s, %s и %s из жезла: урон в секунду вашего оружия."
+L["%s, %s and %s with a wand: damage per second of your weapons."] =
+  "%s, %s и %s из жезла: урон в секунду вашего оружия."
 
 -- Options/DetailsTab.lua
 L["Never"] = "Никогда"
@@ -219,11 +237,13 @@ L["Spell school"] = "Школа магии"
 L["Costs"] = "Стоимость"
 L["Each number of combo points"] = "Каждая длина серии"
 L["More rage or energy (%s, %s)"] = "Больше ярости или энергии (%s, %s)"
-L["Notes: per target, spell rules, bonuses"] = "Примечания: на цель, правила заклинаний, бонусы"
+L["Notes: per target, spell rules, bonuses"] =
+  "Примечания: на цель, правила заклинаний, бонусы"
 L["Crit"] = "Крит"
 L["Crit chance and size"] = "Шанс и сила крита"
 L["Higher level targets"] = "Цели выше уровнем"
-L["Shown when Include crit is on in the Lines tab."] = "Показываются, если в «Строках» включено «Учитывать критические удары»."
+L["Shown when Include crit is on in the Lines tab."] =
+  "Показываются, если в «Строках» включено «Учитывать критические удары»."
 
 -- Options/AppearanceTab.lua
 L["None"] = "Нет"
@@ -249,27 +269,33 @@ L["Appearance"] = "Внешний вид"
 L["Pet action bar"] = "Панель команд питомца"
 L["Pet spellbook"] = "Книга заклинаний питомца"
 L["Lines on pet abilities"] = "Строки у способностей питомца"
-L["Can only turn off what the Lines tab shows."] = "Отключают только то, что включено на вкладке «Строки»."
-L["Damage and healing per cost (DPM, HPM)"] = "Урон и исцеление на единицу затрат (Урон/мана, Исцел./мана)"
+L["Can only turn off what the Lines tab shows."] =
+  "Отключают только то, что включено на вкладке «Строки»."
+L["Damage and healing per cost (DPM, HPM)"] =
+  "Урон и исцеление на единицу затрат (Урон/мана, Исцел./мана)"
 L["Costs and maximums come from your pet."] = "Стоимость и максимум берутся у питомца."
 L["Pets: show on"] = "Питомцы: где показывать"
 L["Finishers"] = "Завершающие приемы"
 L["Lines on finishers"] = "Строки у завершающих приемов"
 L["Combo points for the lines"] = "Длина серии для строк"
-L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] = "%s, %s и другие завершающие приемы: строки берут эту длину серии, подробности показывают все. ДПС не учитывает набор серии."
+L["%s, %s and other finishers: the lines use this many combo points, the details show all. DPS leaves out building them."] =
+  "%s, %s и другие завершающие приемы: строки берут эту длину серии, подробности показывают все. ДПС не учитывает набор серии."
 L["Pets and finishers"] = "Питомцы и серии"
 
 -- Options/RulesTab.lua
 L["Hide the lines"] = "Скрыть строки"
 L["Set the average damage"] = "Задать средний урон"
-L["No such spell. Names only work for spells you know."] = "Нет такого заклинания. Названия работают только для изученных."
+L["No such spell. Names only work for spells you know."] =
+  "Нет такого заклинания. Названия работают только для изученных."
 L["Enter a number above 0."] = "Введите число больше 0."
 L["Saved: %s"] = "Сохранено: %s"
-L["Editing %s. Change it and press Save."] = "Изменение %s. Измените правило и нажмите «Сохранить»."
+L["Editing %s. Change it and press Save."] =
+  "Изменение %s. Измените правило и нажмите «Сохранить»."
 L["Remove"] = "Удалить"
 L["Edit"] = "Изменить"
 L["Add or change a rule"] = "Добавить или изменить правило"
-L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] = "Скрыть строки заклинания или исправить его средний урон. Также /sp hide, /sp pin, /sp show."
+L["Hide a spell's lines or fix its average damage. Also /sp hide, /sp pin, /sp show."] =
+  "Скрыть строки заклинания или исправить его средний урон. Также /sp hide, /sp pin, /sp show."
 L["Spell name or ID"] = "Название или ID заклинания"
 L["Rule"] = "Правило"
 L["Average damage"] = "Средний урон"
@@ -286,16 +312,19 @@ L["New profile"] = "Новый профиль"
 L["Create"] = "Создать"
 L["Copy from"] = "Скопировать из"
 L["Copies another profile into this one."] = "Копирует другой профиль в текущий."
-L["Overwrite the current profile with \"%s\"?"] = "Перезаписать текущий профиль профилем \"%s\"?"
+L["Overwrite the current profile with \"%s\"?"] =
+  "Перезаписать текущий профиль профилем \"%s\"?"
 L["Copy"] = "Скопировать"
 L["Select a profile"] = "Выберите профиль"
 L["Delete a profile"] = "Удалить профиль"
 L["Delete the profile \"%s\"?"] = "Удалить профиль \"%s\"?"
 L["Reset"] = "Сброс"
 L["Reset current profile"] = "Сбросить текущий профиль"
-L["Reset this profile, spell rules included?"] = "Сбросить этот профиль вместе с правилами заклинаний?"
+L["Reset this profile, spell rules included?"] =
+  "Сбросить этот профиль вместе с правилами заклинаний?"
 L["Share"] = "Обмен"
-L["Share this profile as a string. Imports ask before replacing anything."] = "Поделиться профилем через строку. Импорт спросит, прежде чем что-то заменить."
+L["Share this profile as a string. Imports ask before replacing anything."] =
+  "Поделиться профилем через строку. Импорт спросит, прежде чем что-то заменить."
 L["Profiles"] = "Профили"
 
 -- Spells.lua
