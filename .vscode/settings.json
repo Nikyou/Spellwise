@@ -55,6 +55,8 @@
         "ButtonFrameTemplate_HidePortrait",
         "PanelTemplates_SetNumTabs",
         "PanelTemplates_TabResize",
-        "PanelTemplates_SetTab"
+        "PanelTemplates_SetTab",
+        "RunNextFrame",
+        "WT_API"
     ]
 }

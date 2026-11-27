@@ -473,7 +473,7 @@ local function onCleared(tooltip)
         if s.fonts[i] then s.lines[i]:SetFontObject(s.fonts[i]) end
         s.lines[i], s.fonts[i] = nil, nil
     end
-    s.count, s.spellID, s.unit, s.petLines = 0, nil, nil, nil
+    s.count, s.spellID, s.unit, s.petLines, s.details = 0, nil, nil, nil, nil
 end
 
 local function stateOf(tooltip)
@@ -500,7 +500,7 @@ end
 
 local function addLines(tooltip, spellID, unit, petLines)
     local s = stateOf(tooltip)
-    s.spellID, s.unit, s.petLines, lastSpellID = spellID, unit, petLines, spellID
+    s.spellID, s.unit, s.petLines, s.details, lastSpellID = spellID, unit, petLines, detailsState(), spellID
     Tooltip.Build(spellID, unit, built, petLines)
     if #built == 0 then return end
     local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
@@ -508,32 +508,57 @@ local function addLines(tooltip, spellID, unit, petLines)
     tooltip:Show()
 end
 
--- only action buttons redraw on a key press, elsewhere the hint turns into the details in place. lines can't
--- be removed, so letting go waits for a redraw. not in combat, the text can be secret
+-- What's Training adds its price lines after ours, so the details would land below them. its rows draw the
+-- tooltip again when you hover them, and do that themselves for the rank they compare with
+local function rowRedraw(tooltip)
+    local name = tooltip:GetName()
+    if type(name) ~= "string" or isSecret(name) or not name:find("^WhatsTraining") then return nil end
+    local owner = tooltip:GetOwner()
+    local onEnter = owner and not isSecret(owner) and owner:GetScript("OnEnter")
+    if onEnter then return owner, onEnter end
+end
+
+local redraws = {}
+
+-- action buttons and those rows redraw on a key press, elsewhere the hint turns into the details in place. lines
+-- can't be removed, so letting go waits for a redraw. not in combat, the text can be secret
 local function onModifier()
     local mode = db() and db().profile.lines.details
-    if not MODIFIERS[mode] or not modifierDown(mode) or InCombatLockdown() then return end
+    if not MODIFIERS[mode] or InCombatLockdown() then return end
+    local down = modifierDown(mode)
+    wipe(redraws)
     for tooltip, s in pairs(states) do
         if s.count > 0 and s.spellID and tooltip:IsShown() then
-            Tooltip.Build(s.spellID, s.unit, built, s.petLines)
-            -- the details replace the hint, so there are as many lines or more: ours get new text, the rest are added
-            local pairsCount = #built / 2
-            if pairsCount >= s.count then
-                local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
-                local had = s.count
-                for n = 1, pairsCount do
-                    local color = Tooltip.Color(built[n * 2], built.school)
-                    if n <= had then
-                        s.lines[n]:SetText(built[n * 2 - 1])
-                        s.lines[n]:SetTextColor(color[1], color[2], color[3])
-                    else
-                        appendLine(tooltip, s, built[n * 2 - 1], color, path, size, flags)
-                    end
+            local owner, onEnter = rowRedraw(tooltip)
+            if owner then
+                if s.details ~= (down and "show" or "hint") then
+                    redraws[#redraws + 1] = owner
+                    redraws[#redraws + 1] = onEnter
                 end
-                tooltip:Show()
+            elseif down then
+                Tooltip.Build(s.spellID, s.unit, built, s.petLines)
+                -- the details replace the hint, as many lines or more: ours get new text, the rest are added
+                local pairsCount = #built / 2
+                if pairsCount >= s.count then
+                    local path, size, flags = Tooltip.FontPath(), db().profile.look.fontSize, Tooltip.FontFlags()
+                    local had = s.count
+                    for n = 1, pairsCount do
+                        local color = Tooltip.Color(built[n * 2], built.school)
+                        if n <= had then
+                            s.lines[n]:SetText(built[n * 2 - 1])
+                            s.lines[n]:SetTextColor(color[1], color[2], color[3])
+                        else
+                            appendLine(tooltip, s, built[n * 2 - 1], color, path, size, flags)
+                        end
+                    end
+                    tooltip:Show()
+                end
             end
         end
     end
+    -- a redraw can bring a tooltip we haven't seen yet into states, so not while going through it
+    for i = 1, #redraws, 2 do redraws[i + 1](redraws[i]) end
+    wipe(redraws)
 end
 
 local BANK_PET = Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Pet or 1
@@ -566,6 +591,26 @@ end
 
 local function isPetBank(bank) return not isSecret(bank) and (bank == BANK_PET or bank == "pet") end
 
+-- What's Training shows the pet's spells as plain spells (tomes, beast training). its catalog says which they are
+local petSpells, petSource = {}, nil
+
+local function isPetSpell(spellID)
+    local api = WT_API
+    if api ~= petSource then
+        petSource, petSpells = api, {}
+        local _, class = UnitClass("player")
+        class = Spells.Text(class)
+        if (class == "HUNTER" or class == "WARLOCK") and type(api) == "table" and type(api.GetCatalog) == "function" then
+            local ok, catalog = pcall(api.GetCatalog, class)
+            for _, entry in ipairs(ok and type(catalog) == "table" and catalog or {}) do
+                local id = type(entry) == "table" and entry.petAbility and (entry.taughtSpellId or entry.id)
+                if type(id) == "number" then petSpells[id] = true end
+            end
+        end
+    end
+    return petSpells[spellID] == true
+end
+
 -- which option applies and whose spell it is
 local function source(tooltip, data)
     local info = tooltip.GetProcessingTooltipInfo and tooltip:GetProcessingTooltipInfo()
@@ -591,7 +636,7 @@ local function source(tooltip, data)
         if isPetBank(args[2]) then return profile.pets.spellbook, spellID, "pet" end
         return profile.show.spellbook, spellID, "player"
     end
-    return profile.show.other, spellID, "player"
+    return profile.show.other, spellID, spellID and isPetSpell(spellID) and "pet" or "player"
 end
 
 local function onTooltipData(tooltip, data)
