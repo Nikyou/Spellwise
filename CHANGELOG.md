@@ -1,3 +1,7 @@
+#### 1.4.2
+* What's Training: hunter and warlock pet spells in its lists, like the tomes, now count as your pet's. They use your pet's crit and mana or focus, and the settings in the Pets and finishers tab.
+* What's Training: holding Shift shows the details above its prices instead of below them, and letting go brings the hint back.
+
 #### 1.4.1
 * With Rockbiter on your weapon, Windfury's DPS and the Total DPS of other imbues no longer count Rockbiter's attack power. The new imbue would replace it.
 
